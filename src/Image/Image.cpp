@@ -1,5 +1,6 @@
 #include <fstream>
 #include <stdexcept>
+#include <cmath>
 
 #include "Image.hpp"
 
@@ -34,7 +35,36 @@ Image::~Image()
 
 void Image::set(unsigned int x, unsigned int y, Color color)
 {
+    if (x >= this->width || y >= this->height)
+        throw std::invalid_argument("Out of bounds set() (x=" + std::to_string(x) + ", y=" + std::to_string(y) + ")");
     this->data[y][x] = color;
+}
+
+// Bresenham's algorithm
+// See https://www.ics.uci.edu/~gopi/CS112/web/handouts/OldFiles/Bresenham.pdf
+void Image::line(int x0, int y0, int x1, int y1, Color color)
+{
+    int dx = x1 - x0;
+    int dy = y1 - y0;
+    int D = 2 * dy - dx;
+
+    int x = x0;
+    int y = y0;
+
+    this->set(x, y, color);
+
+    while (x < x1)
+    {
+        x++;
+        if (D < 0)
+            D += (2 * dy);
+        else
+        {
+            y++;
+            D += (2 * (dy - dx));
+        }
+        this->set(x, y, color);
+    }
 }
 
 // Save the image to PPM format

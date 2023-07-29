@@ -18,6 +18,9 @@ public:
     ~Image();
 
     void set(unsigned int x, unsigned int y, Color color);
+    void line(int x0, int y0,
+              int x1, int y1,
+              Color color);
     void save(std::string path);
 
 private:

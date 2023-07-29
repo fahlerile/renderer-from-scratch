@@ -4,14 +4,10 @@
 
 int main()
 {
-    unsigned int size = 255;
+    unsigned int size = 100;
     Image image = Image(size, size);
-    for (int x = 0; x < size; x++)
-    {
-        for (int y = 0; y < size; y++)
-        {
-            image.set(x, y, Color(x, x, x));
-        }
-    }
+
+    image.line(50, 10, 90, 30, Color(255, 255, 255));
+
     image.save("test.ppm");
 }
