@@ -7,7 +7,9 @@ int main()
     unsigned int size = 100;
     Image image = Image(size, size);
 
-    image.line(50, 10, 90, 30, Color(255, 255, 255));
+    // slope > 1
+
+    image.line(10, 99, 90, 80, Color(255, 255, 255));
 
     image.save("test.ppm");
 }

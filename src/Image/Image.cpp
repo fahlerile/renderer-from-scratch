@@ -44,14 +44,32 @@ void Image::set(unsigned int x, unsigned int y, Color color)
 // See https://www.ics.uci.edu/~gopi/CS112/web/handouts/OldFiles/Bresenham.pdf
 void Image::line(int x0, int y0, int x1, int y1, Color color)
 {
+    bool steep = false;
+    if (abs(x1-x0) < abs(y1-y0))  // if slope > 1, transpose
+    {
+        std::swap(x0, y0);
+        std::swap(x1, y1);
+        steep = true;
+    }
+
+    if (x0 > x1)  // need to render from left to right
+    {
+        std::swap(x0, x1);
+        std::swap(y0, y1);
+    }
+
     int dx = x1 - x0;
     int dy = y1 - y0;
-    int D = 2 * dy - dx;
 
     int x = x0;
     int y = y0;
 
-    this->set(x, y, color);
+    int D = 2 * dy - dx;
+
+    if (!steep)
+        this->set(x, y, color);
+    else  // if steep, de-transpose
+        this->set(y, x, color);
 
     while (x < x1)
     {
@@ -63,7 +81,10 @@ void Image::line(int x0, int y0, int x1, int y1, Color color)
             y++;
             D += (2 * (dy - dx));
         }
-        this->set(x, y, color);
+        if (!steep)
+            this->set(x, y, color);
+        else  // if steep, de-transpose
+            this->set(y, x, color);
     }
 }
 
