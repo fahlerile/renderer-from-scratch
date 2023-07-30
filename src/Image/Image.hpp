@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include "utils/vec.hpp"
 
 struct Color
 {
@@ -15,17 +16,14 @@ struct Color
 class Image
 {
 public:
-    Image(unsigned int width, unsigned int height);
+    Image(vec2i dimensions);
 
-    void set(unsigned int x, unsigned int y, Color color);
-    void line(int x0, int y0,
-              int x1, int y1,
-              Color color);
+    void set(vec2i position, Color color);
+    void line(vec2i pos1, vec2i pos2, Color color);
     void flip_vertically();
     void save(std::string path);
 
 private:
     std::vector<std::vector<Color>> data;
-    unsigned int width;
-    unsigned int height;
+    vec2i dimensions;
 };

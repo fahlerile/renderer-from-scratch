@@ -5,6 +5,7 @@
 #include <algorithm>
 
 #include "Image.hpp"
+#include "utils/vec.hpp"
 
 Color::Color() { }
 
@@ -15,30 +16,34 @@ Color::Color(unsigned char red, unsigned char green, unsigned char blue)
     this->blue = blue;
 }
 
-Image::Image(unsigned int width, unsigned int height)
+Image::Image(vec2i dimensions)
 {
-    this->width = width;
-    this->height = height;
-    for (int i = 0; i < height; i++)
+    this->dimensions = dimensions;
+    for (int i = 0; i < dimensions.y; i++)
     {
         std::vector<Color> row;
-        for (int j = 0; j < width; j++)
+        for (int j = 0; j < dimensions.x; j++)
             row.push_back(Color());
         this->data.push_back(row);
     }
 }
 
-void Image::set(unsigned int x, unsigned int y, Color color)
+void Image::set(vec2i position, Color color)
 {
-    if (x >= this->width || y >= this->height)
-        throw std::invalid_argument("Out of bounds set() (x=" + std::to_string(x) + ", y=" + std::to_string(y) + ")");
-    this->data[y][x] = color;
+    if (position.x >= this->dimensions.x || position.y >= this->dimensions.y)
+        throw std::invalid_argument("Out of bounds set() (x=" + std::to_string(position.x) + ", y=" + std::to_string(position.y) + ")");
+    this->data[position.y][position.x] = color;
 }
 
 // Bresenham's algorithm
 // See https://www.ics.uci.edu/~gopi/CS112/web/handouts/OldFiles/Bresenham.pdf
-void Image::line(int x0, int y0, int x1, int y1, Color color)
+void Image::line(vec2i pos0, vec2i pos1, Color color)
 {
+    int x0 = pos0.x;
+    int y0 = pos0.y;
+    int x1 = pos1.x;
+    int y1 = pos1.y;
+
     bool steep = false;
     if (abs(x1-x0) < abs(y1-y0))  // if slope > 1, transpose
     {
@@ -64,9 +69,9 @@ void Image::line(int x0, int y0, int x1, int y1, Color color)
     int D = 2 * dy - dx;
 
     if (!steep)
-        this->set(x, y, color);
+        this->set(vec2i(x, y), color);
     else  // if steep, de-transpose
-        this->set(y, x, color);
+        this->set(vec2i(y, x), color);
 
     while (x < x1)
     {
@@ -79,9 +84,9 @@ void Image::line(int x0, int y0, int x1, int y1, Color color)
             D += (2 * (dy - dx));
         }
         if (!steep)
-            this->set(x, y, color);
+            this->set(vec2i(x, y), color);
         else  // if steep, de-transpose
-            this->set(y, x, color);
+            this->set(vec2i(y, x), color);
     }
 }
 
@@ -97,10 +102,10 @@ void Image::save(std::string path)
     file.open(path, std::ios::out | std::ios::binary);
     if (file.is_open())
     {
-        file << "P6\n" << "# \n" << this->width << " " << this->height << "\n255\n";
-        for (int i = 0; i < this->height; i++)
+        file << "P6\n" << "# \n" << this->dimensions.x << " " << this->dimensions.y << "\n255\n";
+        for (int i = 0; i < this->dimensions.y; i++)
         {
-            for (int j = 0; j < this->width; j++)
+            for (int j = 0; j < this->dimensions.x; j++)
             {
                 file << this->data[i][j].red
                      << this->data[i][j].green

@@ -1,16 +1,18 @@
 #pragma once
 #include <string>
+#include <vector>
+#include "utils/vec.hpp"
 
 class Model
 {
 public:
     Model(std::string path);
 
-    std::vector<int> face(int index);
-    std::vector<double> vertex(int index);
+    vec3i face(int index);
+    vec3d vertex(int index);
     int n_faces();
 
 private:
-    std::vector<std::vector<double>> vertices;
-    std::vector<std::vector<int>> faces;
+    std::vector<vec3d> vertices;
+    std::vector<vec3i> faces;
 };

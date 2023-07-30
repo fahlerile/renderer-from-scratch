@@ -5,7 +5,9 @@
 #include <sstream>
 
 #include "Model.hpp"
+#include "utils/vec.hpp"
 
+// Parse .obj file
 Model::Model(std::string path)
 {
     std::ifstream file(path);
@@ -25,7 +27,7 @@ Model::Model(std::string path)
                 while (std::getline(iss, s_coord, ' '))
                     coords.push_back(std::stod(s_coord));
 
-                this->vertices.push_back(coords);
+                this->vertices.push_back(vec3d(coords[0], coords[1], coords[2]));
             }
 
             // if face
@@ -38,7 +40,7 @@ Model::Model(std::string path)
                 while (std::getline(iss, s_triple, ' '))
                     indices.push_back(std::stoi(s_triple.substr(0, s_triple.find('/'))));
 
-                this->faces.push_back(indices);
+                this->faces.push_back(vec3i(indices[0], indices[1], indices[2]));
             }
         }
     }
@@ -46,12 +48,12 @@ Model::Model(std::string path)
         throw std::invalid_argument("Failed to open file " + path);
 }
 
-std::vector<double> Model::vertex(int index)
+vec3d Model::vertex(int index)
 {
     return this->vertices[index];
 }
 
-std::vector<int> Model::face(int index)
+vec3i Model::face(int index)
 {
     return this->faces[index];
 }
