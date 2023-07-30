@@ -9,7 +9,7 @@ int main()
 
     // slope > 1
 
-    image.line(10, 99, 90, 80, Color(255, 255, 255));
+    image.line(49, 49, 70, 40, Color(255, 255, 255));
 
     image.save("test.ppm");
 }

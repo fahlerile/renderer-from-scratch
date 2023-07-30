@@ -2,6 +2,8 @@
 #include <stdexcept>
 #include <cmath>
 
+#include <iostream>  // debug
+
 #include "Image.hpp"
 
 Color::Color() { }
@@ -58,8 +60,12 @@ void Image::line(int x0, int y0, int x1, int y1, Color color)
         std::swap(y0, y1);
     }
 
+    int step = (y0 > y1) ? -1 : 1;
+
     int dx = x1 - x0;
-    int dy = y1 - y0;
+    int dy = abs(y1 - y0);
+
+    std::cout << "dx: " << dx << "\ndy: " << dy << std::endl; 
 
     int x = x0;
     int y = y0;
@@ -78,7 +84,7 @@ void Image::line(int x0, int y0, int x1, int y1, Color color)
             D += (2 * dy);
         else
         {
-            y++;
+            y += step;
             D += (2 * (dy - dx));
         }
         if (!steep)
