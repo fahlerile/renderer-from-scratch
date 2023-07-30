@@ -6,7 +6,7 @@
 
 int main()
 {
-    vec2i dimensions = vec2i(2048, 2048);
+    vec2i dimensions = {2048, 2048};
 
     Image image = Image(dimensions);
     Color white = Color(255, 255, 255);
@@ -21,16 +21,16 @@ int main()
             vec3d v0 = head.vertex(face[j] - 1);
             vec3d v1 = head.vertex(face[(j+1)%3] - 1);
 
-            int x0 = (v0[0] + 1.) * dimensions.x / 2.;
-            int y0 = (v0[1] + 1.) * dimensions.y / 2.;
-            int x1 = (v1[0] + 1.) * dimensions.x / 2.;
-            int y1 = (v1[1] + 1.) * dimensions.y / 2.;
+            int x0 = (v0.x + 1.) * dimensions.x / 2.;
+            int y0 = (v0.y + 1.) * dimensions.y / 2.;
+            int x1 = (v1.x + 1.) * dimensions.x / 2.;
+            int y1 = (v1.y + 1.) * dimensions.y / 2.;
 
             // because sometimes out of bounds
             if (x0 == 0 || y0 == 0 || x1 == 0 || y1 == 0)
-                image.line(vec2i(x0, y0), vec2i(x1, y1), white);
+                image.line({x0, y0}, {x1, y1}, white);
             else
-                image.line(vec2i(x0 - 1, y0 - 1), vec2i(x1 - 1, y1 - 1), white);
+                image.line({x0 - 1, y0 - 1}, {x1 - 1, y1 - 1}, white);
         }
     }
 

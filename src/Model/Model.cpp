@@ -27,7 +27,7 @@ Model::Model(std::string path)
                 while (std::getline(iss, s_coord, ' '))
                     coords.push_back(std::stod(s_coord));
 
-                this->vertices.push_back(vec3d(coords[0], coords[1], coords[2]));
+                this->vertices.push_back({coords[0], coords[1], coords[2]});
             }
 
             // if face
@@ -40,7 +40,7 @@ Model::Model(std::string path)
                 while (std::getline(iss, s_triple, ' '))
                     indices.push_back(std::stoi(s_triple.substr(0, s_triple.find('/'))));
 
-                this->faces.push_back(vec3i(indices[0], indices[1], indices[2]));
+                this->faces.push_back({indices[0], indices[1], indices[2]});
             }
         }
     }

@@ -69,9 +69,9 @@ void Image::line(vec2i pos0, vec2i pos1, Color color)
     int D = 2 * dy - dx;
 
     if (!steep)
-        this->set(vec2i(x, y), color);
+        this->set({x, y}, color);
     else  // if steep, de-transpose
-        this->set(vec2i(y, x), color);
+        this->set({y, x}, color);
 
     while (x < x1)
     {
@@ -84,9 +84,9 @@ void Image::line(vec2i pos0, vec2i pos1, Color color)
             D += (2 * (dy - dx));
         }
         if (!steep)
-            this->set(vec2i(x, y), color);
+            this->set({x, y}, color);
         else  // if steep, de-transpose
-            this->set(vec2i(y, x), color);
+            this->set({y, x}, color);
     }
 }
 
