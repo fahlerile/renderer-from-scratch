@@ -90,6 +90,43 @@ void Image::line(vec2i pos0, vec2i pos1, Color color)
     }
 }
 
+// `vertices` is a pointer to an array of 3 vertices that are in counter-clockwise direction
+void Image::triangle(vec2i* vertices, Color color)
+{
+    auto edge_function([](vec2i a, vec2i b, vec2i p)
+    {
+        vec2i ab = {b.x - a.x, b.y - a.y};
+        vec2i ap = {p.x - a.x, p.y - a.y};
+        return ab.x * ap.y - ab.y * ap.x;
+    });
+
+    vec2i v0 = vertices[0];
+    vec2i v1 = vertices[1];
+    vec2i v2 = vertices[2];
+
+    int xmin = std::min(std::min(v0.x, v1.x), v2.x);
+    int ymin = std::min(std::min(v0.y, v1.y), v2.y);
+    int xmax = std::max(std::max(v0.x, v1.x), v2.x);
+    int ymax = std::max(std::max(v0.y, v1.y), v2.y);
+
+    for (int y = ymin; y < ymax; y++)
+    {
+        for (int x = xmin; x < xmax; x++)
+        {
+            vec2i p = {x, y};
+
+            int w0 = edge_function(v0, v1, p);
+            int w1 = edge_function(v1, v2, p);
+            int w2 = edge_function(v2, v0, p);
+
+            bool pixel_inside_triangle = w0 >= 0 && w1 >= 0 && w2 >= 0;
+
+            if (pixel_inside_triangle)
+                this->set({x, y}, color);
+        }
+    }
+}
+
 void Image::flip_vertically()
 {
     std::reverse(this->data.begin(), this->data.end());
