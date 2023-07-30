@@ -90,6 +90,11 @@ void Image::line(int x0, int y0, int x1, int y1, Color color)
     }
 }
 
+void Image::flip_vertically()
+{
+    // std::reverse(this->data.begin(), this->data.end());
+}
+
 // Save the image to PPM format
 void Image::save(std::string path)
 {

@@ -21,6 +21,7 @@ public:
     void line(int x0, int y0,
               int x1, int y1,
               Color color);
+    void flip_vertically();
     void save(std::string path);
 
 private:
