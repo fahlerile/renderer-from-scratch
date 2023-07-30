@@ -1,6 +1,8 @@
 #include <fstream>
 #include <stdexcept>
 #include <cmath>
+#include <vector>
+#include <algorithm>
 
 #include "Image.hpp"
 
@@ -17,20 +19,13 @@ Image::Image(unsigned int width, unsigned int height)
 {
     this->width = width;
     this->height = height;
-    this->data = new Color*[height];
     for (int i = 0; i < height; i++)
     {
-        this->data[i] = new Color[width];
+        std::vector<Color> row;
+        for (int j = 0; j < width; j++)
+            row.push_back(Color());
+        this->data.push_back(row);
     }
-}
-
-Image::~Image()
-{
-    for (int i = 0; i < this->height; i++)
-    {
-        delete[] this->data[i];
-    }
-    delete[] this->data;
 }
 
 void Image::set(unsigned int x, unsigned int y, Color color)
@@ -92,7 +87,7 @@ void Image::line(int x0, int y0, int x1, int y1, Color color)
 
 void Image::flip_vertically()
 {
-    // std::reverse(this->data.begin(), this->data.end());
+    std::reverse(this->data.begin(), this->data.end());
 }
 
 // Save the image to PPM format
