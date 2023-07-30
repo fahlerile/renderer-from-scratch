@@ -5,6 +5,7 @@ set(
   SOURCES
   src/main.cpp
   src/Image/Image.cpp
+  src/Model/Model.cpp
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")  # force .exe to build/bin
