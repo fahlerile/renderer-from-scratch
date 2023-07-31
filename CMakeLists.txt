@@ -4,6 +4,8 @@ project(renderer)
 set(
   SOURCES
   src/main.cpp
+  src/Window/Window.cpp
+  src/Color/Color.cpp
   src/Model/Model.cpp
 )
 
