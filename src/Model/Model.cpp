@@ -5,7 +5,7 @@
 #include <sstream>
 
 #include "Model.hpp"
-#include "utils/vec.hpp"
+#include "utils/vec/vec.hpp"
 
 // Parse .obj file
 Model::Model(std::string path)

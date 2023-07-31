@@ -1,7 +1,7 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include "Color/Color.hpp"
-#include "utils/vec.hpp"
+#include "utils/vec/vec.hpp"
 #include "utils/constants.hpp"
 #include "Window.hpp"
 

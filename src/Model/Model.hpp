@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "utils/vec.hpp"
+#include "utils/vec/vec.hpp"
 
 class Model
 {

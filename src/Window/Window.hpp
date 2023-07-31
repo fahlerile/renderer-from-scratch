@@ -1,7 +1,7 @@
 #pragma once
 #include <SDL2/SDL.h>
 #include "Color/Color.hpp"
-#include "utils/vec.hpp"
+#include "utils/vec/vec.hpp"
 
 class Window
 {
