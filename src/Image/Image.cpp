@@ -4,6 +4,8 @@
 #include <vector>
 #include <algorithm>
 
+#include <iostream>  // debug
+
 #include "Image.hpp"
 #include "utils/vec.hpp"
 
@@ -14,6 +16,20 @@ Color::Color(unsigned char red, unsigned char green, unsigned char blue)
     this->red = red;
     this->green = green;
     this->blue = blue;
+}
+
+Color Color::operator*(float scalar)
+{
+    return {(unsigned char) ((float) this->red   * scalar),
+            (unsigned char) ((float) this->green * scalar),
+            (unsigned char) ((float) this->blue  * scalar)};
+}
+
+Color Color::operator+(Color other)
+{
+    return {(unsigned char) ((unsigned int) this->red   + (unsigned int) other.red),
+            (unsigned char) ((unsigned int) this->green + (unsigned int) other.green),
+            (unsigned char) ((unsigned int) this->blue  + (unsigned int) other.blue)};
 }
 
 Image::Image(vec2i dimensions)
@@ -90,9 +106,11 @@ void Image::line(vec2i pos0, vec2i pos1, Color color)
     }
 }
 
-// `vertices` is a pointer to an array of 3 vertices that are in counter-clockwise direction
+// Vertices are assumed to be in counter-clockwise direction
 // Top-left rasterization rule
-void Image::triangle(vec2i v0, vec2i v1, vec2i v2, Color color)
+// https://www.youtube.com/watch?v=k5wtuKWmV48
+void Image::triangle(vec2i v0, vec2i v1, vec2i v2,
+                     Color c0, Color c1, Color c2)
 {
     // a, b, p is points
     auto edge_function([](vec2i a, vec2i b, vec2i p)
@@ -110,8 +128,12 @@ void Image::triangle(vec2i v0, vec2i v1, vec2i v2, Color color)
     {
         vec2i edge = {end.x - start.x, end.y - start.y};
 
-        bool is_top = (edge.y == 0 || edge.x < 0);
+        std::cout << edge.x << " " << edge.y << std::endl;
+
+        bool is_top = (edge.y == 0 && edge.x < 0);
         bool is_left = (edge.y < 0);
+
+        std::cout << is_top << " " << is_left << std::endl;
 
         return is_top || is_left;
     });
@@ -127,6 +149,11 @@ void Image::triangle(vec2i v0, vec2i v1, vec2i v2, Color color)
     int bias1 = (is_top_left(v1, v2)) ? 0 : -1;
     int bias2 = (is_top_left(v2, v0)) ? 0 : -1;
 
+    std::cout << "BIASES: " << bias0 << " " << bias1 << " " << bias2 << std::endl;
+
+    // calculate the area of the parallelogram formed by vectors v0v1 and v0v2
+    int area = edge_function(v0, v1, v2);
+
     // traverse over each pixel in bounding box
     for (int y = ymin; y < ymax; y++)
     {
@@ -135,14 +162,25 @@ void Image::triangle(vec2i v0, vec2i v1, vec2i v2, Color color)
             vec2i p = {x, y};
 
             // calculate edge function for each edge and point
-            int w0 = edge_function(v0, v1, p) + bias0;
-            int w1 = edge_function(v1, v2, p) + bias1;
-            int w2 = edge_function(v2, v0, p) + bias2;
+            int w0 = edge_function(v0, v1, p);
+            int w1 = edge_function(v1, v2, p);
+            int w2 = edge_function(v2, v0, p);
 
-            bool pixel_inside_triangle = w0 >= 0 && w1 >= 0 && w2 >= 0;
+            bool pixel_inside_triangle = (w0 + bias0 <= 0) &&
+                                         (w1 + bias1 <= 0) &&
+                                         (w2 + bias2 <= 0);
 
             if (pixel_inside_triangle)
+            {
+                // calculate barycentric coordinates for this pixel
+                // (alpha - v0, beta - v1, gamma - v2)
+                float gamma = (float) w0 / area;  // this is gamma because it shows
+                float alpha = (float) w1 / area;  // how much I "pull" to the v2
+                float beta = (float) w2 / area;   // in percents, etc. for others
+                Color color = (c0 * alpha) + (c1 * beta) + (c2 * gamma);
+
                 this->set({x, y}, color);
+            }
         }
     }
 }

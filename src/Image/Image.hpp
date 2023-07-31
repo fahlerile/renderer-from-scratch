@@ -11,6 +11,9 @@ struct Color
 
     Color();
     Color(unsigned char red, unsigned char green, unsigned char blue);
+
+    Color operator*(float scalar);
+    Color operator+(Color other);
 };
 
 class Image
@@ -20,7 +23,8 @@ public:
 
     void set(vec2i position, Color color);
     void line(vec2i pos1, vec2i pos2, Color color);
-    void triangle(vec2i v0, vec2i v1, vec2i v2, Color color);
+    void triangle(vec2i v0, vec2i v1, vec2i v2,
+                  Color c0, Color c1, Color c2);
     void flip_vertically();
     void save(std::string path);
 
