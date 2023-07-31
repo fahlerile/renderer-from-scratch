@@ -146,18 +146,31 @@ void Image::triangle(vec2i v0, vec2i v1, vec2i v2,
     // calculate the area of the parallelogram formed by vectors v0v1 and v0v2
     int area = edge_function(v0, v1, v2);
 
+    // calculate initlial value of edge function
+    // for each edge and first point (incremental computation)
+    vec2i p0 = {xmin, ymin};
+    int w0_begin = edge_function(v0, v1, p0) + bias0;
+    int w1_begin = edge_function(v1, v2, p0) + bias1;
+    int w2_begin = edge_function(v2, v0, p0) + bias2;
+
+    // set delta w constants
+    const int dx_w0 = v0.y - v1.y;
+    const int dy_w0 = v1.x - v0.x;
+    const int dx_w1 = v1.y - v2.y;
+    const int dy_w1 = v2.x - v1.x;
+    const int dx_w2 = v2.y - v0.y;
+    const int dy_w2 = v0.x - v2.x;
+
     // traverse over each pixel in bounding box
     for (int y = ymin; y < ymax; y++)
     {
+        // set w values to the beginning of this row
+        int w0 = w0_begin;
+        int w1 = w1_begin;
+        int w2 = w2_begin;
+
         for (int x = xmin; x < xmax; x++)
         {
-            vec2i p = {x, y};
-
-            // calculate edge function for each edge and point
-            int w0 = edge_function(v0, v1, p) + bias0;
-            int w1 = edge_function(v1, v2, p) + bias1;
-            int w2 = edge_function(v2, v0, p) + bias2;
-
             bool pixel_inside_triangle = (w0 <= 0) &&
                                          (w1 <= 0) &&
                                          (w2 <= 0);
@@ -173,7 +186,17 @@ void Image::triangle(vec2i v0, vec2i v1, vec2i v2,
 
                 this->set({x, y}, color);
             }
+
+            // change w value for the next pixel in this row
+            w0 = w0 + dx_w0;
+            w1 = w1 + dx_w1;
+            w2 = w2 + dx_w2;
         }
+
+        // update w value to the next
+        w0_begin += dy_w0;
+        w1_begin += dy_w1;
+        w2_begin += dy_w2;
     }
 }
 
