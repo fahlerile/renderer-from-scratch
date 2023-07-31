@@ -11,8 +11,12 @@ public:
 
     void poll_events();
     void clear(Color color);
-    void draw_pixel(vec2i position, Color color);
     void swap_buffers();
+
+    void draw_pixel(vec2i position, Color color);
+    void line(vec2i pos0, vec2i pos1, Color color);
+    void triangle(vec2i v0, vec2i v1, vec2i v2,
+                  Color c0, Color c1, Color c2);
 
     bool is_running();
 
