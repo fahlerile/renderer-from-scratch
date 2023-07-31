@@ -5,7 +5,7 @@ The goal of this project is to create a simple program that can transform vertex
 # TODO
 
 - Add function to draw triangles
-    - Rotating triangles
+    - Check for pixel imprecision when sticking two spinning triangles together
     - Add subpixel precision
 - Draw a model with triangles!
 - Implement a Z-buffer
