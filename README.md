@@ -5,7 +5,6 @@ The goal of this project is to create a simple program that can transform vertex
 # TODO
 
 - Add function to draw triangles
-    - Fix rasterizing conventions
     - Implement incremental computation
 - Draw a model with triangles!
 - Implement a Z-buffer
