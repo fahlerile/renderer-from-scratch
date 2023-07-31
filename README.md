@@ -5,6 +5,5 @@ The goal of this project is to create a simple program that can transform vertex
 # TODO
 
 - Add function to draw triangles
-    - Implement top-left rasterization rule (so no overdraws)
     - Implement Barycentric coordinates
     - Implement incremental computation

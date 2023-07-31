@@ -91,6 +91,7 @@ void Image::line(vec2i pos0, vec2i pos1, Color color)
 }
 
 // `vertices` is a pointer to an array of 3 vertices that are in counter-clockwise direction
+// Top-left rasterization rule
 void Image::triangle(vec2i v0, vec2i v1, vec2i v2, Color color)
 {
     // a, b, p is points
@@ -103,11 +104,28 @@ void Image::triangle(vec2i v0, vec2i v1, vec2i v2, Color color)
         return ab.x * ap.y - ab.y * ap.x;
     });
 
+    // helper function for rasterization rules implementation
+    // `start` and `end` are points
+    auto is_top_left([](vec2i start, vec2i end)
+    {
+        vec2i edge = {end.x - start.x, end.y - start.y};
+
+        bool is_top = (edge.y == 0 || edge.x < 0);
+        bool is_left = (edge.y < 0);
+
+        return is_top || is_left;
+    });
+
     // determine the bounding box
     int xmin = std::min(std::min(v0.x, v1.x), v2.x);
     int ymin = std::min(std::min(v0.y, v1.y), v2.y);
     int xmax = std::max(std::max(v0.x, v1.x), v2.x);
     int ymax = std::max(std::max(v0.y, v1.y), v2.y);
+
+    // calculate edge biases
+    int bias0 = (is_top_left(v0, v1)) ? 0 : -1;
+    int bias1 = (is_top_left(v1, v2)) ? 0 : -1;
+    int bias2 = (is_top_left(v2, v0)) ? 0 : -1;
 
     // traverse over each pixel in bounding box
     for (int y = ymin; y < ymax; y++)
@@ -116,9 +134,10 @@ void Image::triangle(vec2i v0, vec2i v1, vec2i v2, Color color)
         {
             vec2i p = {x, y};
 
-            int w0 = edge_function(v0, v1, p);
-            int w1 = edge_function(v1, v2, p);
-            int w2 = edge_function(v2, v0, p);
+            // calculate edge function for each edge and point
+            int w0 = edge_function(v0, v1, p) + bias0;
+            int w1 = edge_function(v1, v2, p) + bias1;
+            int w2 = edge_function(v2, v0, p) + bias2;
 
             bool pixel_inside_triangle = w0 >= 0 && w1 >= 0 && w2 >= 0;
 
