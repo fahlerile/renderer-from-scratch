@@ -20,7 +20,7 @@ public:
 
     void set(vec2i position, Color color);
     void line(vec2i pos1, vec2i pos2, Color color);
-    void triangle(vec2i* vertices, Color color);
+    void triangle(vec2i v0, vec2i v1, vec2i v2, Color color);
     void flip_vertically();
     void save(std::string path);
 

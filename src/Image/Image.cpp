@@ -91,24 +91,25 @@ void Image::line(vec2i pos0, vec2i pos1, Color color)
 }
 
 // `vertices` is a pointer to an array of 3 vertices that are in counter-clockwise direction
-void Image::triangle(vec2i* vertices, Color color)
+void Image::triangle(vec2i v0, vec2i v1, vec2i v2, Color color)
 {
+    // a, b, p is points
     auto edge_function([](vec2i a, vec2i b, vec2i p)
     {
+        // get vectors that represent sides AB and AP
         vec2i ab = {b.x - a.x, b.y - a.y};
         vec2i ap = {p.x - a.x, p.y - a.y};
+        // get z-component of vec3(ab, 0) X vec3(ap, 0)
         return ab.x * ap.y - ab.y * ap.x;
     });
 
-    vec2i v0 = vertices[0];
-    vec2i v1 = vertices[1];
-    vec2i v2 = vertices[2];
-
+    // determine the bounding box
     int xmin = std::min(std::min(v0.x, v1.x), v2.x);
     int ymin = std::min(std::min(v0.y, v1.y), v2.y);
     int xmax = std::max(std::max(v0.x, v1.x), v2.x);
     int ymax = std::max(std::max(v0.y, v1.y), v2.y);
 
+    // traverse over each pixel in bounding box
     for (int y = ymin; y < ymax; y++)
     {
         for (int x = xmin; x < xmax; x++)
