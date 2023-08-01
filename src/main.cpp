@@ -31,39 +31,45 @@ int main()
         vec3i face = head.face(i);
 
         // -1 because .obj is 1-indexed
-        vec3d v0 = head.vertex(face[0] - 1);
-        vec3d v1 = head.vertex(face[1] - 1);
-        vec3d v2 = head.vertex(face[2] - 1);
+        vec3d v[3] = {
+            head.vertex(face[0] - 1),
+            head.vertex(face[1] - 1),
+            head.vertex(face[2] - 1)
+        };
 
-        // cast to needed type and discard z coordinate
-        vec2fix24_8 p0 = {fpm::fixed_24_8(v0.x),
-                          fpm::fixed_24_8(v0.y)};
-        vec2fix24_8 p1 = {fpm::fixed_24_8(v1.x),
-                          fpm::fixed_24_8(v1.y)};
-        vec2fix24_8 p2 = {fpm::fixed_24_8(v2.x),
-                          fpm::fixed_24_8(v2.y)};
-
-        // scale coordinates
-        p0.x = (p0.x + 1) * dimensions.x / 2;
-        p0.y = (p0.y + 1) * dimensions.y / 2;
-        p1.x = (p1.x + 1) * dimensions.x / 2;
-        p1.y = (p1.y + 1) * dimensions.y / 2;
-        p2.x = (p2.x + 1) * dimensions.x / 2;
-        p2.y = (p2.y + 1) * dimensions.y / 2;
+        // cast to needed type, discard z coordinate and scale coordinates
+        vec2fix24_8 p[3] = {
+            {
+                (fpm::fixed_24_8(v[0].x) + 1) * dimensions.x / 2,
+                (fpm::fixed_24_8(v[0].y) + 1) * dimensions.y / 2
+            },
+            {
+                (fpm::fixed_24_8(v[1].x) + 1) * dimensions.x / 2,
+                (fpm::fixed_24_8(v[1].y) + 1) * dimensions.y / 2
+            },
+            {
+                (fpm::fixed_24_8(v[2].x) + 1) * dimensions.x / 2,
+                (fpm::fixed_24_8(v[2].y) + 1) * dimensions.y / 2
+            }
+        };
 
         // transform coordinates to see not a flipped image
-        p0 = {p0.x, -p0.y};
-        p0.y += dimensions.y - 1;
-        p1 = {p1.x, -p1.y};
-        p1.y += dimensions.y - 1;
-        p2 = {p2.x, -p2.y};
-        p2.y += dimensions.y - 1;
+        p[0] = {p[0].x, -p[0].y};
+        p[0].y += dimensions.y - 1;
+        p[1] = {p[1].x, -p[1].y};
+        p[1].y += dimensions.y - 1;
+        p[2] = {p[2].x, -p[2].y};
+        p[2].y += dimensions.y - 1;
 
-        window.triangle(
-            p2, p1, p0,
+        Color c[3] = {
             {(unsigned char) distr(gen), (unsigned char) distr(gen), (unsigned char) distr(gen)},
             {(unsigned char) distr(gen), (unsigned char) distr(gen), (unsigned char) distr(gen)},
             {(unsigned char) distr(gen), (unsigned char) distr(gen), (unsigned char) distr(gen)}
+        };
+
+        window.triangle(
+            p[2], p[1], p[0],
+            c[0], c[1], c[2]
         );
     }
 
