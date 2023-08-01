@@ -8,7 +8,6 @@ The goal of this project is to create a simple program that can transform vertex
 
 # TODO
 
-- Add function to draw triangles
-    - Fix pixel gaps
-- Draw a model with triangles!
+- (try to) draw a model with triangles!
+- Try to improve `Window::triangle()` performance (6ms per frame with 2 color-interpolated triangles is very slow)
 - Implement a Z-buffer

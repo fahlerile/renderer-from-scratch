@@ -21,11 +21,6 @@ public:
 
     bool is_running();
 
-    // temporary
-    bool rotate = true;
-    bool draw_first = true;
-    bool draw_second = true;
-
 private:
     SDL_Window *window;
     SDL_Renderer *renderer;

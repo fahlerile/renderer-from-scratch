@@ -33,15 +33,7 @@ void Window::poll_events()
         if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE))
             this->running = false;
 
-        if (event.type == SDL_KEYDOWN && event.key.repeat == 0)
-        {
-            if (event.key.keysym.sym == SDLK_SPACE)
-                this->rotate = !(this->rotate);
-            else if (event.key.keysym.sym == SDLK_q)
-                this->draw_first = !(this->draw_first);
-            else if (event.key.keysym.sym == SDLK_w)
-                this->draw_second = !(this->draw_second);
-        }
+        // if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {}
     }
 }
 
