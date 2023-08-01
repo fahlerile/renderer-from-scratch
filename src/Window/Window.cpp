@@ -214,3 +214,8 @@ void Window::triangle(vec2fix24_8 v0, vec2fix24_8 v1, vec2fix24_8 v2,
         w2_begin += dy_w2;
     }
 }
+
+void Window::triangle(vec2fix24_8 v0, vec2fix24_8 v1, vec2fix24_8 v2, Color color)
+{
+    this->triangle(v0, v1, v2, color, color, color);
+}

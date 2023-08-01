@@ -16,6 +16,7 @@ public:
     T operator-(vec2<T> other);
     T operator[](int index) const;
     T& operator[](int index);
+    vec2<T> operator-();
 
     operator vec2<int>() const { return {(int) this->x, (int) this->y}; };
     operator vec2<float>() const { return {(float) this->x, (float) this->y}; };
@@ -63,6 +64,15 @@ T& vec2<T>::operator[](int index)
     if (index == 0) return this->x;
     else if (index == 1) return this->y;
     throw std::invalid_argument("vec2 invalid index " + index);
+}
+
+template <typename T>
+vec2<T> vec2<T>::operator-()
+{
+    return {
+        -this->x,
+        -this->y
+    };
 }
 
 template <typename T>

@@ -18,6 +18,7 @@ public:
     void line(vec2i pos0, vec2i pos1, Color color);
     void triangle(vec2fix24_8 v0, vec2fix24_8 v1, vec2fix24_8 v2,
                   Color c0,       Color c1,       Color c2);
+    void triangle(vec2fix24_8 v0, vec2fix24_8 v1, vec2fix24_8 v2, Color color);
 
     bool is_running();
 
