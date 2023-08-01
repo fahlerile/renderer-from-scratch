@@ -25,8 +25,21 @@ Window::~Window()
 
 void Window::poll_events()
 {
-    if (SDL_PollEvent(&(this->event)) && this->event.type == SDL_QUIT)
-        this->running = false;
+    while (SDL_PollEvent(&(this->event)))
+    {
+        if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE))
+            this->running = false;
+
+        if (event.type == SDL_KEYDOWN && event.key.repeat == 0)
+        {
+            if (event.key.keysym.sym == SDLK_SPACE)
+                this->rotate = !(this->rotate);
+            else if (event.key.keysym.sym == SDLK_q)
+                this->draw_first = !(this->draw_first);
+            else if (event.key.keysym.sym == SDLK_w)
+                this->draw_second = !(this->draw_second);
+        }
+    }
 }
 
 void Window::clear(Color color)
@@ -109,24 +122,24 @@ void Window::line(vec2i pos0, vec2i pos1, Color color)
 // Vertices are assumed to be in counter-clockwise direction
 // Top-left rasterization rule
 // https://www.youtube.com/watch?v=k5wtuKWmV48
-void Window::triangle(vec2i v0, vec2i v1, vec2i v2,
+void Window::triangle(vec2f v0, vec2f v1, vec2f v2,
                       Color c0, Color c1, Color c2)
 {
     // a, b, p is points
-    auto edge_function([](vec2i a, vec2i b, vec2i p)
+    auto edge_function([](vec2f a, vec2f b, vec2f p)
     {
         // get vectors that represent sides AB and AP
-        vec2i ab = {b.x - a.x, b.y - a.y};
-        vec2i ap = {p.x - a.x, p.y - a.y};
+        vec2f ab = {b.x - a.x, b.y - a.y};
+        vec2f ap = {p.x - a.x, p.y - a.y};
         // get z-component of vec3(ab, 0) X vec3(ap, 0)
         return ab.x * ap.y - ab.y * ap.x;
     });
 
     // helper function for rasterization rules implementation
     // `start` and `end` are points
-    auto is_top_left([](vec2i start, vec2i end)
+    auto is_top_left([](vec2f start, vec2f end)
     {
-        vec2i edge = {end.x - start.x, end.y - start.y};
+        vec2f edge = {end.x - start.x, end.y - start.y};
 
         bool is_top = (edge.y == 0 && edge.x < 0);
         bool is_left = (edge.y < 0);
@@ -135,41 +148,41 @@ void Window::triangle(vec2i v0, vec2i v1, vec2i v2,
     });
 
     // determine the bounding box
-    int xmin = std::min(std::min(v0.x, v1.x), v2.x);
-    int ymin = std::min(std::min(v0.y, v1.y), v2.y);
-    int xmax = std::max(std::max(v0.x, v1.x), v2.x);
-    int ymax = std::max(std::max(v0.y, v1.y), v2.y);
+    int xmin = floor(std::min(std::min(v0.x, v1.x), v2.x));
+    int ymin = floor(std::min(std::min(v0.y, v1.y), v2.y));
+    int xmax = ceil(std::max(std::max(v0.x, v1.x), v2.x));
+    int ymax = ceil(std::max(std::max(v0.y, v1.y), v2.y));
 
     // calculate edge biases
-    int bias0 = (is_top_left(v0, v1)) ? 0 : 1;
-    int bias1 = (is_top_left(v1, v2)) ? 0 : 1;
-    int bias2 = (is_top_left(v2, v0)) ? 0 : 1;
+    float bias0 = (is_top_left(v0, v1)) ? 0 : 1;
+    float bias1 = (is_top_left(v1, v2)) ? 0 : 1;
+    float bias2 = (is_top_left(v2, v0)) ? 0 : 1;
 
     // calculate the area of the parallelogram formed by vectors v0v1 and v0v2
-    int area = edge_function(v0, v1, v2);
+    float area = edge_function(v0, v1, v2);
 
     // calculate initlial value of edge function
     // for each edge and first point (incremental computation)
-    vec2i p0 = {xmin, ymin};
-    int w0_begin = edge_function(v0, v1, p0) + bias0;
-    int w1_begin = edge_function(v1, v2, p0) + bias1;
-    int w2_begin = edge_function(v2, v0, p0) + bias2;
+    vec2f p0 = {xmin + 0.5f, ymin + 0.5f};
+    float w0_begin = edge_function(v0, v1, p0) + bias0;
+    float w1_begin = edge_function(v1, v2, p0) + bias1;
+    float w2_begin = edge_function(v2, v0, p0) + bias2;
 
     // set delta w constants
-    const int dx_w0 = v0.y - v1.y;
-    const int dy_w0 = v1.x - v0.x;
-    const int dx_w1 = v1.y - v2.y;
-    const int dy_w1 = v2.x - v1.x;
-    const int dx_w2 = v2.y - v0.y;
-    const int dy_w2 = v0.x - v2.x;
+    const float dx_w0 = v0.y - v1.y;
+    const float dy_w0 = v1.x - v0.x;
+    const float dx_w1 = v1.y - v2.y;
+    const float dy_w1 = v2.x - v1.x;
+    const float dx_w2 = v2.y - v0.y;
+    const float dy_w2 = v0.x - v2.x;
 
     // traverse over each pixel in bounding box
     for (int y = ymin; y < ymax; y++)
     {
         // set w values to the beginning of this row
-        int w0 = w0_begin;
-        int w1 = w1_begin;
-        int w2 = w2_begin;
+        float w0 = w0_begin;
+        float w1 = w1_begin;
+        float w2 = w2_begin;
 
         for (int x = xmin; x < xmax; x++)
         {
@@ -181,7 +194,7 @@ void Window::triangle(vec2i v0, vec2i v1, vec2i v2,
             {
                 // calculate barycentric coordinates for this pixel
                 // (alpha - v0, beta - v1, gamma - v2)
-                float gamma = (float) w0 / area;  // this is gamma because it shows
+                float gamma = (float) w0 / area;  // <= this is gamma because it shows
                 float alpha = (float) w1 / area;  // how much I "pull" to the v2
                 float beta = (float) w2 / area;   // in percents, etc. for others
                 Color color = (c0 * alpha) + (c1 * beta) + (c2 * gamma);
