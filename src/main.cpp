@@ -32,32 +32,32 @@ int main()
         window.poll_events();
         window.clear({0, 0, 0});
 
-        vec2f v0;
-        vec2f v1;
-        vec2f v2;
-        vec2f v3;
+        vec2fix16_16 v0;
+        vec2fix16_16 v1;
+        vec2fix16_16 v2;
+        vec2fix16_16 v3;
 
         if (window.rotate)
         {
             float angle_rad = SDL_GetTicks() / 10 * 0.01;
-            v0 = vertices[0].rotate(angle_rad, center);
-            v1 = vertices[1].rotate(angle_rad, center);
-            v2 = vertices[2].rotate(angle_rad, center);
-            v3 = vertices[3].rotate(angle_rad, center);
+            v0 = (vec2fix16_16) vertices[0].rotate(angle_rad, center);
+            v1 = (vec2fix16_16) vertices[1].rotate(angle_rad, center);
+            v2 = (vec2fix16_16) vertices[2].rotate(angle_rad, center);
+            v3 = (vec2fix16_16) vertices[3].rotate(angle_rad, center);
             angle_save = angle_rad;
         }
         else
         {
-            v0 = vertices[0].rotate(angle_save, center);
-            v1 = vertices[1].rotate(angle_save, center);
-            v2 = vertices[2].rotate(angle_save, center);
-            v3 = vertices[3].rotate(angle_save, center);
+            v0 = (vec2fix16_16) vertices[0].rotate(angle_save, center);
+            v1 = (vec2fix16_16) vertices[1].rotate(angle_save, center);
+            v2 = (vec2fix16_16) vertices[2].rotate(angle_save, center);
+            v3 = (vec2fix16_16) vertices[3].rotate(angle_save, center);
         }
 
-        if (window.draw_first)
-            window.triangle(v0, v1, v2, colors[0], colors[1], colors[2]);
-        if (window.draw_second)
-            window.triangle(v3, v0, v2, {255, 255, 255}, {255, 255, 255}, {255, 255, 255});
+        // if (window.draw_first)
+        //     window.triangle(v0, v1, v2, colors[0], colors[1], colors[2]);
+        // if (window.draw_second)
+        //     window.triangle(v3, v0, v2, {255, 255, 255}, {255, 255, 255}, {255, 255, 255});
 
         window.swap_buffers();
     }

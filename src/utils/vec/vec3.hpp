@@ -5,14 +5,20 @@
 template <typename T>
 struct vec3
 {
-    T x = 0;
-    T y = 0;
-    T z = 0;
+public:
+    T x {0};
+    T y {0};
+    T z {0};
 
     T operator+(vec3<T> other);
     T operator-(vec3<T> other);
     T operator[](int index) const;
     T& operator[](int index);
+
+    operator vec3<int>() const { return {(int) this->x, (int) this->y, (int) this->z}; };
+    operator vec3<float>() const { return {(float) this->x, (float) this->y, (float) this->z}; };
+    operator vec3<double>() const { return {(double) this->x, (double) this->y, (double) this->z}; };
+    operator vec3<fpm::fixed_16_16>() const { return {fpm::fixed_16_16(this->x), fpm::fixed_16_16(this->y), fpm::fixed_16_16(this->z)}; };
 
     std::string to_string();
 };

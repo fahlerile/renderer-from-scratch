@@ -8,16 +8,21 @@
 template <typename T>
 struct vec2
 {
-    T x = 0;
-    T y = 0;
+public:
+    T x {0};
+    T y {0};
 
     T operator+(vec2<T> other);
     T operator-(vec2<T> other);
     T operator[](int index) const;
     T& operator[](int index);
 
-    vec2<float> rotate(float rad, vec2<float> center);
+    operator vec2<int>() const { return {(int) this->x, (int) this->y}; };
+    operator vec2<float>() const { return {(float) this->x, (float) this->y}; };
+    operator vec2<double>() const { return {(double) this->x, (double) this->y}; };
+    operator vec2<fpm::fixed_16_16>() const { return {fpm::fixed_16_16(this->x), fpm::fixed_16_16(this->y)}; };
 
+    vec2<float> rotate(float rad, vec2<float> center);
     std::string to_string();
 };
 
