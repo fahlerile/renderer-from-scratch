@@ -1,5 +1,7 @@
 #pragma once
 #include <stdexcept>
+#include <string>
+#include <sstream>
 #include <cmath>
 
 template <typename T>
@@ -14,6 +16,8 @@ struct vec2
     T& operator[](int index);
 
     vec2<int> rotate(float rad, vec2<int> center);
+
+    std::string to_string();
 };
 
 typedef vec2<int> vec2i;
@@ -69,4 +73,12 @@ vec2i vec2<T>::rotate(float rad, vec2i center)
     result.x = round(result.x);
     result.y = round(result.y);
     return result;
+}
+
+template <typename T>
+std::string vec2<T>::to_string()
+{
+    std::ostringstream iss;
+    iss << std::string("vec2(") << this->x << ", " << this->y << ")";
+    return iss.str();
 }

@@ -12,6 +12,8 @@ struct vec3
     T operator-(vec3<T> other);
     T operator[](int index) const;
     T& operator[](int index);
+
+    std::string to_string();
 };
 
 typedef vec3<int> vec3i;
@@ -54,4 +56,10 @@ T& vec3<T>::operator[](int index)
     else if (index == 1) return this->y;
     else if (index == 2) return this->z;
     throw std::invalid_argument("vec3 invalid index " + index);
+}
+
+template <typename T>
+std::string vec3<T>::to_string()
+{
+    return std::string("vec2(" + this->x + ", " + this->y + ", " + this->z + ")");
 }
