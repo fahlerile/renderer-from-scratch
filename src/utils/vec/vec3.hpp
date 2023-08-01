@@ -18,7 +18,7 @@ public:
     operator vec3<int>() const { return {(int) this->x, (int) this->y, (int) this->z}; };
     operator vec3<float>() const { return {(float) this->x, (float) this->y, (float) this->z}; };
     operator vec3<double>() const { return {(double) this->x, (double) this->y, (double) this->z}; };
-    operator vec3<fpm::fixed_16_16>() const { return {fpm::fixed_16_16(this->x), fpm::fixed_16_16(this->y), fpm::fixed_16_16(this->z)}; };
+    operator vec3<fpm::fixed_24_8>() const { return vec3<fpm::fixed_24_8> {fpm::fixed_24_8(this->x), fpm::fixed_24_8(this->y), fpm::fixed_16_16(this->z)}; };
 
     std::string to_string();
 };
@@ -26,7 +26,7 @@ public:
 typedef vec3<int> vec3i;
 typedef vec3<float> vec3f;
 typedef vec3<double> vec3d;
-typedef vec3<fpm::fixed_16_16> vec3fix16_16;
+typedef vec3<fpm::fixed_24_8> vec3fix24_8;
 
 template <typename T>
 T vec3<T>::operator+(vec3<T> other)

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <SDL2/SDL.h>
+#include <fpm/fixed.hpp>
 #include "Color/Color.hpp"
 #include "utils/vec/vec.hpp"
 #include "utils/constants.hpp"
@@ -122,81 +123,85 @@ void Window::line(vec2i pos0, vec2i pos1, Color color)
 // Vertices are assumed to be in counter-clockwise direction
 // Top-left rasterization rule
 // https://www.youtube.com/watch?v=k5wtuKWmV48
-void Window::triangle(vec2f v0, vec2f v1, vec2f v2,
-                      Color c0, Color c1, Color c2)
+void Window::triangle(vec2fix24_8 v0, vec2fix24_8 v1, vec2fix24_8 v2,
+                      Color c0,       Color c1,       Color c2)
 {
+    using vec2fix = vec2fix24_8;
+    using fixed = fpm::fixed_24_8;
+
     // a, b, p is points
-    auto edge_function([](vec2f a, vec2f b, vec2f p)
+    auto edge_function([](vec2fix a, vec2fix b, vec2fix p)
     {
         // get vectors that represent sides AB and AP
-        vec2f ab = {b.x - a.x, b.y - a.y};
-        vec2f ap = {p.x - a.x, p.y - a.y};
-        // get z-component of vec3(ab, 0) X vec3(ap, 0)
+        vec2fix ab = {b.x - a.x, b.y - a.y};
+        vec2fix ap = {p.x - a.x, p.y - a.y};
+        // get z-component of vec3(ab, 0) x vec3(ap, 0)
         return ab.x * ap.y - ab.y * ap.x;
     });
 
     // helper function for rasterization rules implementation
     // `start` and `end` are points
-    auto is_top_left([](vec2f start, vec2f end)
+    auto is_top_left([](vec2fix start, vec2fix end)
     {
-        vec2f edge = {end.x - start.x, end.y - start.y};
+        vec2fix edge = {end.x - start.x, end.y - start.y};
 
-        bool is_top = (edge.y == 0 && edge.x < 0);
-        bool is_left = (edge.y < 0);
+        bool is_top = (edge.y == (fixed) {0} && edge.x < (fixed) {0});
+        bool is_left = (edge.y < (fixed) {0});
 
         return is_top || is_left;
     });
 
     // determine the bounding box
-    int xmin = floor(std::min(std::min(v0.x, v1.x), v2.x));
-    int ymin = floor(std::min(std::min(v0.y, v1.y), v2.y));
-    int xmax = ceil(std::max(std::max(v0.x, v1.x), v2.x));
-    int ymax = ceil(std::max(std::max(v0.y, v1.y), v2.y));
+    // TODO: fix floor ceil errors
+    int xmin = fpm::floor(std::min(std::min(v0.x, v1.x), v2.x));
+    int ymin = fpm::floor(std::min(std::min(v0.y, v1.y), v2.y));
+    int xmax = fpm::ceil(std::max(std::max(v0.x, v1.x), v2.x));
+    int ymax = fpm::ceil(std::max(std::max(v0.y, v1.y), v2.y));
 
-    // calculate edge biases
-    float bias0 = (is_top_left(v0, v1)) ? 0 : 1;
-    float bias1 = (is_top_left(v1, v2)) ? 0 : 1;
-    float bias2 = (is_top_left(v2, v0)) ? 0 : 1;
+    // calculate edge biases  TODO: CHANGE 1 TO SMALLEST POSITIVE NUMBER IN FIXED_24_8 TYPE
+    fixed bias0 { (is_top_left(v0, v1)) ? 0 : 1 };
+    fixed bias1 { (is_top_left(v1, v2)) ? 0 : 1 };
+    fixed bias2 { (is_top_left(v2, v0)) ? 0 : 1 };
 
     // calculate the area of the parallelogram formed by vectors v0v1 and v0v2
-    float area = edge_function(v0, v1, v2);
+    fixed area = edge_function(v0, v1, v2);
 
     // calculate initlial value of edge function
     // for each edge and first point (incremental computation)
-    vec2f p0 = {xmin + 0.5f, ymin + 0.5f};
-    float w0_begin = edge_function(v0, v1, p0) + bias0;
-    float w1_begin = edge_function(v1, v2, p0) + bias1;
-    float w2_begin = edge_function(v2, v0, p0) + bias2;
+    vec2fix p0 = {xmin + 0.5, ymin + 0.5};
+    fixed w0_begin = edge_function(v0, v1, p0) + bias0;
+    fixed w1_begin = edge_function(v1, v2, p0) + bias1;
+    fixed w2_begin = edge_function(v2, v0, p0) + bias2;
 
     // set delta w constants
-    const float dx_w0 = v0.y - v1.y;
-    const float dy_w0 = v1.x - v0.x;
-    const float dx_w1 = v1.y - v2.y;
-    const float dy_w1 = v2.x - v1.x;
-    const float dx_w2 = v2.y - v0.y;
-    const float dy_w2 = v0.x - v2.x;
+    const fixed dx_w0 = v0.y - v1.y;
+    const fixed dy_w0 = v1.x - v0.x;
+    const fixed dx_w1 = v1.y - v2.y;
+    const fixed dy_w1 = v2.x - v1.x;
+    const fixed dx_w2 = v2.y - v0.y;
+    const fixed dy_w2 = v0.x - v2.x;
 
     // traverse over each pixel in bounding box
     for (int y = ymin; y < ymax; y++)
     {
         // set w values to the beginning of this row
-        float w0 = w0_begin;
-        float w1 = w1_begin;
-        float w2 = w2_begin;
+        fixed w0 = w0_begin;
+        fixed w1 = w1_begin;
+        fixed w2 = w2_begin;
 
         for (int x = xmin; x < xmax; x++)
         {
-            bool pixel_inside_triangle = (w0 <= 0) &&
-                                         (w1 <= 0) &&
-                                         (w2 <= 0);
+            bool pixel_inside_triangle = (w0 <= {0}) &&
+                                         (w1 <= {0}) &&
+                                         (w2 <= {0});
 
             if (pixel_inside_triangle)
             {
                 // calculate barycentric coordinates for this pixel
                 // (alpha - v0, beta - v1, gamma - v2)
-                float gamma = (float) w0 / area;  // <= this is gamma because it shows
-                float alpha = (float) w1 / area;  // how much I "pull" to the v2
-                float beta = (float) w2 / area;   // in percents, etc. for others
+                fixed gamma = w0 / area;  // <= this is gamma because it shows
+                fixed alpha = w1 / area;  // how much I "pull" to the v2
+                fixed beta = w2 / area;   // in percents, etc. for others
                 Color color = (c0 * alpha) + (c1 * beta) + (c2 * gamma);
 
                 this->draw_pixel({x, y}, color);

@@ -20,7 +20,7 @@ public:
     operator vec2<int>() const { return {(int) this->x, (int) this->y}; };
     operator vec2<float>() const { return {(float) this->x, (float) this->y}; };
     operator vec2<double>() const { return {(double) this->x, (double) this->y}; };
-    operator vec2<fpm::fixed_16_16>() const { return {fpm::fixed_16_16(this->x), fpm::fixed_16_16(this->y)}; };
+    operator vec2<fpm::fixed_24_8>() const { return {fpm::fixed_24_8(this->x), fpm::fixed_24_8(this->y)}; };
 
     vec2<float> rotate(float rad, vec2<float> center);
     std::string to_string();
@@ -29,7 +29,7 @@ public:
 typedef vec2<int> vec2i;
 typedef vec2<float> vec2f;
 typedef vec2<double> vec2d;
-typedef vec2<fpm::fixed_16_16> vec2fix16_16;
+typedef vec2<fpm::fixed_24_8> vec2fix24_8;
 
 template <typename T>
 T vec2<T>::operator+(vec2<T> other)
