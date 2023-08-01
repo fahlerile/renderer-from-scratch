@@ -1,6 +1,8 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <fpm/fixed.hpp>
+#include <fpm/math.hpp>
+#include <fpm/ios.hpp>
 #include "Color/Color.hpp"
 #include "utils/vec/vec.hpp"
 #include "utils/constants.hpp"
@@ -128,6 +130,8 @@ void Window::triangle(vec2fix24_8 v0, vec2fix24_8 v1, vec2fix24_8 v2,
 {
     using vec2fix = vec2fix24_8;
     using fixed = fpm::fixed_24_8;
+    const int decimal_bits = 8;
+    const fixed smallest_positive = fixed::from_raw_value(1);
 
     // a, b, p is points
     auto edge_function([](vec2fix a, vec2fix b, vec2fix p)
@@ -152,23 +156,22 @@ void Window::triangle(vec2fix24_8 v0, vec2fix24_8 v1, vec2fix24_8 v2,
     });
 
     // determine the bounding box
-    // TODO: fix floor ceil errors
-    int xmin = fpm::floor(std::min(std::min(v0.x, v1.x), v2.x));
-    int ymin = fpm::floor(std::min(std::min(v0.y, v1.y), v2.y));
-    int xmax = fpm::ceil(std::max(std::max(v0.x, v1.x), v2.x));
-    int ymax = fpm::ceil(std::max(std::max(v0.y, v1.y), v2.y));
+    int xmin = (int) fpm::floor(std::min(std::min(v0.x, v1.x), v2.x));
+    int ymin = (int) fpm::floor(std::min(std::min(v0.y, v1.y), v2.y));
+    int xmax = (int) fpm::ceil(std::max(std::max(v0.x, v1.x), v2.x));
+    int ymax = (int) fpm::ceil(std::max(std::max(v0.y, v1.y), v2.y));
 
-    // calculate edge biases  TODO: CHANGE 1 TO SMALLEST POSITIVE NUMBER IN FIXED_24_8 TYPE
-    fixed bias0 { (is_top_left(v0, v1)) ? 0 : 1 };
-    fixed bias1 { (is_top_left(v1, v2)) ? 0 : 1 };
-    fixed bias2 { (is_top_left(v2, v0)) ? 0 : 1 };
+    // calculate edge biases
+    fixed bias0 { (is_top_left(v0, v1)) ? fixed(0) : smallest_positive };
+    fixed bias1 { (is_top_left(v1, v2)) ? fixed(0) : smallest_positive };
+    fixed bias2 { (is_top_left(v2, v0)) ? fixed(0) : smallest_positive };
 
     // calculate the area of the parallelogram formed by vectors v0v1 and v0v2
     fixed area = edge_function(v0, v1, v2);
 
     // calculate initlial value of edge function
     // for each edge and first point (incremental computation)
-    vec2fix p0 = {xmin + 0.5, ymin + 0.5};
+    vec2f p0 = {xmin + 0.5f, ymin + 0.5f};
     fixed w0_begin = edge_function(v0, v1, p0) + bias0;
     fixed w1_begin = edge_function(v1, v2, p0) + bias1;
     fixed w2_begin = edge_function(v2, v0, p0) + bias2;
@@ -191,17 +194,17 @@ void Window::triangle(vec2fix24_8 v0, vec2fix24_8 v1, vec2fix24_8 v2,
 
         for (int x = xmin; x < xmax; x++)
         {
-            bool pixel_inside_triangle = (w0 <= {0}) &&
-                                         (w1 <= {0}) &&
-                                         (w2 <= {0});
+            bool pixel_inside_triangle = (w0 <= fixed(0)) &&
+                                         (w1 <= fixed(0)) &&
+                                         (w2 <= fixed(0));
 
             if (pixel_inside_triangle)
             {
                 // calculate barycentric coordinates for this pixel
                 // (alpha - v0, beta - v1, gamma - v2)
-                fixed gamma = w0 / area;  // <= this is gamma because it shows
-                fixed alpha = w1 / area;  // how much I "pull" to the v2
-                fixed beta = w2 / area;   // in percents, etc. for others
+                double gamma = (double) (w0 / area);  // <= this is gamma because it shows
+                double alpha = (double) (w1 / area);  // how much I "pull" to the v2
+                double beta = (double) (w2 / area);   // in percents, etc. for others
                 Color color = (c0 * alpha) + (c1 * beta) + (c2 * gamma);
 
                 this->draw_pixel({x, y}, color);
