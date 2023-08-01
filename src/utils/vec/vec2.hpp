@@ -1,5 +1,4 @@
 #pragma once
-#include <fpm/fixed.hpp>
 #include <stdexcept>
 #include <string>
 #include <sstream>
@@ -24,7 +23,6 @@ struct vec2
 typedef vec2<int> vec2i;
 typedef vec2<float> vec2f;
 typedef vec2<double> vec2d;
-typedef vec2<fpm::fixed_16_16> vec2fix16_16;
 
 template <typename T>
 T vec2<T>::operator+(vec2<T> other)
