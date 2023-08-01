@@ -1,3 +1,4 @@
+#include <iostream>
 #define SDL_MAIN_HANDLED
 #include "Window/Window.hpp"
 #include "Color/Color.hpp"
@@ -27,8 +28,17 @@ int main()
     vec2f center = {(float) dimensions.x / 2, (float) dimensions.y / 2};
     float angle_save = 0.0f;
 
+    float this_frame_time = 0.0f;
+    float delta_time = 0.0f;
+    float prev_frame_time = 0.0f;
+
     while (window.is_running())
     {
+        this_frame_time = SDL_GetTicks();
+        delta_time = this_frame_time - prev_frame_time;
+
+        std::cout << "Frametime: " << delta_time << std::endl;
+
         window.poll_events();
         window.clear({0, 0, 0});
 
@@ -60,6 +70,8 @@ int main()
             window.triangle(v3, v0, v2, {255, 255, 255}, {255, 255, 255}, {255, 255, 255});
 
         window.swap_buffers();
+
+        prev_frame_time = this_frame_time;
     }
 
     return 0;
