@@ -11,20 +11,8 @@
 int main()
 {
     const vec2i dimensions = {512, 512};
-
-    Window window({800, 800}, dimensions);
-
-    unsigned int this_frame_time = 0;
-    unsigned int delta_time = 0;
-    unsigned int prev_frame_time = 0;
-
-    Color white = Color(255, 255, 255);
+    Window window({1024, 1024}, dimensions);
     Model head = Model("./res/models/african_head.obj");
-
-    // initialize random color generator
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distr(0, 255);
 
     for (int i = 0; i < head.n_faces(); i++)
     {
@@ -38,20 +26,8 @@ int main()
             head.vertex(face[2] - 1)
         };
 
-        // 2 edge vectors to calculate normal vector
-        vec3d edge[2] = {
-            {  // TODO: USE OVERLOADED OPERATORS TO DO THIS
-                v[1].x - v[0].x,
-                v[1].y - v[0].y,
-                v[1].z - v[0].z,
-            },
-            {
-                v[2].x - v[0].x,
-                v[2].y - v[0].y,
-                v[2].z - v[0].z,
-            }
-        };
-        vec3d normal = edge[1].cross_product(edge[0]);
+        // calculate normal vector for lighting
+        vec3d normal = (v[2]-v[0]).cross_product(v[1]-v[0]);
         normal = normal.normalize();
 
         // points on the screen, screen space
@@ -79,16 +55,22 @@ int main()
         p[2] = {p[2].x, -p[2].y};
         p[2].y += dimensions.y - 1;
 
+        // calculate light intensity
         vec3d light = {0, 0, 1};
+        Color light_color = {255, 255, 255};
         float intensity = normal.dot_product(light);
 
+        // backface culling (rendering only faces with light)
         if (intensity > 0)
         {
-            Color color = {255, 255, 255};
-            color = color * intensity;
+            Color color = light_color * intensity;
             window.triangle(p[2], p[1], p[0], color);
         }
     }
+
+    unsigned int this_frame_time = 0;
+    unsigned int delta_time = 0;
+    unsigned int prev_frame_time = 0;
 
     while (window.is_running())
     {

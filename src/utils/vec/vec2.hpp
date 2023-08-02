@@ -13,8 +13,8 @@ public:
     T x {0};
     T y {0};
 
-    T operator+(vec2<T> other);
-    T operator-(vec2<T> other);
+    vec2<T> operator+(vec2<T> other);
+    vec2<T> operator-(vec2<T> other);
     T operator[](int index) const;
     T& operator[](int index);
     vec2<T> operator-();
@@ -38,7 +38,7 @@ typedef vec2<double> vec2d;
 typedef vec2<fpm::fixed_24_8> vec2fix24_8;
 
 template <typename T>
-T vec2<T>::operator+(vec2<T> other)
+vec2<T> vec2<T>::operator+(vec2<T> other)
 {
     return vec2<T> {
         this->x + other.x,
@@ -47,7 +47,7 @@ T vec2<T>::operator+(vec2<T> other)
 }
 
 template <typename T>
-T vec2<T>::operator-(vec2<T> other)
+vec2<T> vec2<T>::operator-(vec2<T> other)
 {
     return vec2<T> {
         this->x - other.x,

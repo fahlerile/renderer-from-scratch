@@ -12,8 +12,8 @@ public:
     T y {0};
     T z {0};
 
-    T operator+(vec3<T> other);
-    T operator-(vec3<T> other);
+    vec3<T> operator+(vec3<T> other);
+    vec3<T> operator-(vec3<T> other);
     T operator[](int index) const;
     T& operator[](int index);
     vec3<T> operator-();
@@ -36,9 +36,9 @@ typedef vec3<double> vec3d;
 typedef vec3<fpm::fixed_24_8> vec3fix24_8;
 
 template <typename T>
-T vec3<T>::operator+(vec3<T> other)
+vec3<T> vec3<T>::operator+(vec3<T> other)
 {
-    return vec3<T> {
+    return {
         this->x + other.x,
         this->y + other.y,
         this->z + other.z
@@ -46,9 +46,9 @@ T vec3<T>::operator+(vec3<T> other)
 }
 
 template <typename T>
-T vec3<T>::operator-(vec3<T> other)
+vec3<T> vec3<T>::operator-(vec3<T> other)
 {
-    return vec3<T> {
+    return {
         this->x - other.x,
         this->y - other.y,
         this->z - other.z
