@@ -30,6 +30,7 @@ int main()
     {
         vec3i face = head.face(i);
 
+        // vertices, world space
         // -1 because .obj is 1-indexed
         vec3d v[3] = {
             head.vertex(face[0] - 1),
@@ -37,6 +38,23 @@ int main()
             head.vertex(face[2] - 1)
         };
 
+        // 2 edge vectors to calculate normal vector
+        vec3d edge[2] = {
+            {  // TODO: USE OVERLOADED OPERATORS TO DO THIS
+                v[1].x - v[0].x,
+                v[1].y - v[0].y,
+                v[1].z - v[0].z,
+            },
+            {
+                v[2].x - v[0].x,
+                v[2].y - v[0].y,
+                v[2].z - v[0].z,
+            }
+        };
+        vec3d normal = edge[1].cross_product(edge[0]);
+        normal = normal.normalize();
+
+        // points on the screen, screen space
         // cast to needed type, discard z coordinate and scale coordinates
         vec2fix24_8 p[3] = {
             {
@@ -61,16 +79,15 @@ int main()
         p[2] = {p[2].x, -p[2].y};
         p[2].y += dimensions.y - 1;
 
-        Color c[3] = {
-            {(unsigned char) distr(gen), (unsigned char) distr(gen), (unsigned char) distr(gen)},
-            {(unsigned char) distr(gen), (unsigned char) distr(gen), (unsigned char) distr(gen)},
-            {(unsigned char) distr(gen), (unsigned char) distr(gen), (unsigned char) distr(gen)}
-        };
+        vec3d light = {0, 0, 1};
+        float intensity = normal.dot_product(light);
 
-        window.triangle(
-            p[2], p[1], p[0],
-            c[0], c[1], c[2]
-        );
+        if (intensity > 0)
+        {
+            Color color = {255, 255, 255};
+            color = color * intensity;
+            window.triangle(p[2], p[1], p[0], color);
+        }
     }
 
     while (window.is_running())
@@ -78,7 +95,7 @@ int main()
         this_frame_time = SDL_GetTicks();
         delta_time = this_frame_time - prev_frame_time;
 
-        std::cout << "Frametime: " << delta_time << std::endl;
+        // std::cout << "Frametime: " << delta_time << std::endl;
 
         window.poll_events();
         // window.clear({0, 0, 0});

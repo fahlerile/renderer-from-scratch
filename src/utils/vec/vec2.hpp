@@ -1,9 +1,10 @@
 #pragma once
-#include <fpm/fixed.hpp>
 #include <stdexcept>
 #include <string>
 #include <sstream>
 #include <cmath>
+#include <fpm/fixed.hpp>
+#include "vec3.hpp"
 
 template <typename T>
 struct vec2
@@ -22,6 +23,10 @@ public:
     operator vec2<float>() const { return {(float) this->x, (float) this->y}; };
     operator vec2<double>() const { return {(double) this->x, (double) this->y}; };
     operator vec2<fpm::fixed_24_8>() const { return {fpm::fixed_24_8(this->x), fpm::fixed_24_8(this->y)}; };
+
+    vec3<T> cross_product(vec2<T> b);
+    T dot_product(vec2<T> b);
+    vec2<T> normalize();
 
     vec2<float> rotate(float rad, vec2<float> center);
     std::string to_string();
@@ -72,6 +77,33 @@ vec2<T> vec2<T>::operator-()
     return {
         -this->x,
         -this->y
+    };
+}
+
+template <typename T>
+vec3<T> vec2<T>::cross_product(vec2<T> b)
+{
+    return vec3<T> {
+        (T) 0,
+        (T) 0,
+        this->x * b.y - this->y * b.x
+    };
+}
+
+template <typename T>
+T vec2<T>::dot_product(vec2<T> b)
+{
+    return (this->x * b.x + this->y * b.y);
+}
+
+template <typename T>
+vec2<T> vec2<T>::normalize()
+{
+    // casting to double to avoid ambiguity error if T = int
+    double magnitude = std::sqrt(std::pow((double) this->x, 2) + std::pow((double) this->y, 2));
+    return {
+        this->x / magnitude,
+        this->y / magnitude
     };
 }
 

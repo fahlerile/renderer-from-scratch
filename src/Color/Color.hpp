@@ -9,6 +9,8 @@ struct Color
     Color();
     Color(unsigned char red, unsigned char green, unsigned char blue);
 
+    Color operator*(int value);
     Color operator*(float scalar);
+    Color operator*(double scalar);
     Color operator+(Color other);
 };

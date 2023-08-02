@@ -115,7 +115,7 @@ void Window::line(vec2i pos0, vec2i pos1, Color color)
 }
 
 // Vertices are assumed to be in counter-clockwise direction
-// Top-left rasterization rule
+// Uses top-left rasterization rule
 // https://www.youtube.com/watch?v=k5wtuKWmV48
 void Window::triangle(vec2fix24_8 v0, vec2fix24_8 v1, vec2fix24_8 v2,
                       Color c0,       Color c1,       Color c2)
@@ -132,7 +132,7 @@ void Window::triangle(vec2fix24_8 v0, vec2fix24_8 v1, vec2fix24_8 v2,
         vec2fix ab = {b.x - a.x, b.y - a.y};
         vec2fix ap = {p.x - a.x, p.y - a.y};
         // get z-component of vec3(ab, 0) x vec3(ap, 0)
-        return ab.x * ap.y - ab.y * ap.x;
+        return ab.cross_product(ap).z;
     });
 
     // helper function for rasterization rules implementation

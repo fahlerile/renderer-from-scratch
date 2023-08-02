@@ -2,6 +2,8 @@
 #include <fpm/fixed.hpp>
 #include <stdexcept>
 
+#include <iostream>  // debug
+
 template <typename T>
 struct vec3
 {
@@ -20,6 +22,10 @@ public:
     operator vec3<float>() const { return {(float) this->x, (float) this->y, (float) this->z}; };
     operator vec3<double>() const { return {(double) this->x, (double) this->y, (double) this->z}; };
     operator vec3<fpm::fixed_24_8>() const { return vec3<fpm::fixed_24_8> {fpm::fixed_24_8(this->x), fpm::fixed_24_8(this->y), fpm::fixed_16_16(this->z)}; };
+
+    vec3<T> cross_product(vec3<T> b);
+    T dot_product(vec3<T> b);
+    vec3<T> normalize();
 
     std::string to_string();
 };
@@ -74,6 +80,34 @@ vec3<T> vec3<T>::operator-()
         -this->x,
         -this->y,
         -this->z
+    };
+}
+
+template <typename T>
+vec3<T> vec3<T>::cross_product(vec3<T> b)
+{
+    return vec3<T> {
+        this->y * b.z - this->z * b.y,
+        this->z * b.x - this->x * b.z,
+        this->x * b.y - this->y * b.x
+    };
+}
+
+template <typename T>
+T vec3<T>::dot_product(vec3<T> b)
+{
+    return (this->x * b.x + this->y * b.y + this->z * b.z);
+}
+
+template <typename T>
+vec3<T> vec3<T>::normalize()
+{
+    // casting to double to avoid ambiguity error if T = int
+    double magnitude = std::sqrt(std::pow((double) this->x, 2) + std::pow((double) this->y, 2) + std::pow((double) this->z, 2));
+    return {
+        this->x / magnitude,
+        this->y / magnitude,
+        this->z / magnitude
     };
 }
 
