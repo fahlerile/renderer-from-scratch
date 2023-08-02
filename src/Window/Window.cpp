@@ -117,11 +117,11 @@ void Window::line(vec2i pos0, vec2i pos1, Color color)
 // Vertices are assumed to be in counter-clockwise direction
 // Uses top-left rasterization rule
 // https://www.youtube.com/watch?v=k5wtuKWmV48
-void Window::triangle(vec2fix24_8 v0, vec2fix24_8 v1, vec2fix24_8 v2,
-                      Color c0,       Color c1,       Color c2)
+void Window::triangle(std::vector<vec2fix24_8> v, std::vector<Color> c)
 {
     using vec2fix = vec2fix24_8;
     using fixed = fpm::fixed_24_8;
+
     const int decimal_bits = 8;
     const fixed smallest_positive = fixed::from_raw_value(1);
 
@@ -129,8 +129,8 @@ void Window::triangle(vec2fix24_8 v0, vec2fix24_8 v1, vec2fix24_8 v2,
     auto edge_function([](vec2fix a, vec2fix b, vec2fix p)
     {
         // get vectors that represent sides AB and AP
-        vec2fix ab = {b.x - a.x, b.y - a.y};
-        vec2fix ap = {p.x - a.x, p.y - a.y};
+        vec2fix ab = b - a;
+        vec2fix ap = p - a;
         // get z-component of vec3(ab, 0) x vec3(ap, 0)
         return ab.cross_product(ap).z;
     });
@@ -139,7 +139,7 @@ void Window::triangle(vec2fix24_8 v0, vec2fix24_8 v1, vec2fix24_8 v2,
     // `start` and `end` are points
     auto is_top_left([](vec2fix start, vec2fix end)
     {
-        vec2fix edge = {end.x - start.x, end.y - start.y};
+        vec2fix edge = end - start;
 
         bool is_top = (edge.y == (fixed) {0} && edge.x < (fixed) {0});
         bool is_left = (edge.y < (fixed) {0});
@@ -147,75 +147,94 @@ void Window::triangle(vec2fix24_8 v0, vec2fix24_8 v1, vec2fix24_8 v2,
         return is_top || is_left;
     });
 
-    // determine the bounding box
-    int xmin = (int) fpm::floor(std::min(std::min(v0.x, v1.x), v2.x));
-    int ymin = (int) fpm::floor(std::min(std::min(v0.y, v1.y), v2.y));
-    int xmax = (int) fpm::ceil(std::max(std::max(v0.x, v1.x), v2.x));
-    int ymax = (int) fpm::ceil(std::max(std::max(v0.y, v1.y), v2.y));
+    // calculate the area of the parallelogram formed by vectors v[0]v[1] and v[0]v[2]
+    // needed for barycentic coordinate interpolation
+    const fixed area = edge_function(v[0], v[1], v[2]);
+
+    // determine the bounding box (min and max values of x and y)
+    const vec2i min = {
+        (int) fpm::floor(std::min(std::min(v[0].x, v[1].x), v[2].x)),
+        (int) fpm::floor(std::min(std::min(v[0].y, v[1].y), v[2].y))
+    };
+    const vec2i max = {
+        (int) fpm::ceil(std::max(std::max(v[0].x, v[1].x), v[2].x)),
+        (int) fpm::ceil(std::max(std::max(v[0].y, v[1].y), v[2].y))
+    };
 
     // calculate edge biases
-    fixed bias0 { (is_top_left(v0, v1)) ? fixed(0) : smallest_positive };
-    fixed bias1 { (is_top_left(v1, v2)) ? fixed(0) : smallest_positive };
-    fixed bias2 { (is_top_left(v2, v0)) ? fixed(0) : smallest_positive };
-
-    // calculate the area of the parallelogram formed by vectors v0v1 and v0v2
-    fixed area = edge_function(v0, v1, v2);
+    const fixed bias[3] = {
+        (is_top_left(v[0], v[1])) ? fixed(0) : smallest_positive,
+        (is_top_left(v[1], v[2])) ? fixed(0) : smallest_positive,
+        (is_top_left(v[2], v[0])) ? fixed(0) : smallest_positive,
+    };
 
     // calculate initlial value of edge function
     // for each edge and first point (incremental computation)
-    vec2f p0 = {xmin + 0.5f, ymin + 0.5f};
-    fixed w0_begin = edge_function(v0, v1, p0) + bias0;
-    fixed w1_begin = edge_function(v1, v2, p0) + bias1;
-    fixed w2_begin = edge_function(v2, v0, p0) + bias2;
+    vec2f p0 = {min.x + 0.5f, min.y + 0.5f};
+    fixed w_initial[3] = {
+        edge_function(v[0], v[1], p0) + bias[0],
+        edge_function(v[1], v[2], p0) + bias[1],
+        edge_function(v[2], v[0], p0) + bias[2]
+    };
 
     // set delta w constants
-    const fixed dx_w0 = v0.y - v1.y;
-    const fixed dy_w0 = v1.x - v0.x;
-    const fixed dx_w1 = v1.y - v2.y;
-    const fixed dy_w1 = v2.x - v1.x;
-    const fixed dx_w2 = v2.y - v0.y;
-    const fixed dy_w2 = v0.x - v2.x;
+    const vec2fix24_8 dw[3] = {
+        {
+            v[0].y - v[1].y,
+            v[1].x - v[0].x
+        },
+        {
+            v[1].y - v[2].y,
+            v[2].x - v[1].x
+        },
+        {
+            v[2].y - v[0].y,
+            v[0].x - v[2].x
+        }
+    };
 
     // traverse over each pixel in bounding box
-    for (int y = ymin; y < ymax; y++)
+    for (int y = min.y; y < max.y; y++)
     {
         // set w values to the beginning of this row
-        fixed w0 = w0_begin;
-        fixed w1 = w1_begin;
-        fixed w2 = w2_begin;
+        fixed w[3] = {
+            w_initial[0],
+            w_initial[1],
+            w_initial[2]
+        };
 
-        for (int x = xmin; x < xmax; x++)
+        for (int x = min.x; x < max.x; x++)
         {
-            bool pixel_inside_triangle = (w0 <= fixed(0)) &&
-                                         (w1 <= fixed(0)) &&
-                                         (w2 <= fixed(0));
+            bool pixel_inside_triangle = (w[0] <= fixed(0)) &&
+                                         (w[1] <= fixed(0)) &&
+                                         (w[2] <= fixed(0));
 
             if (pixel_inside_triangle)
             {
                 // calculate barycentric coordinates for this pixel
-                // (alpha - v0, beta - v1, gamma - v2)
-                double gamma = (double) (w0 / area);  // <= this is gamma because it shows
-                double alpha = (double) (w1 / area);  // how much I "pull" to the v2
-                double beta = (double) (w2 / area);   // in percents, etc. for others
-                Color color = (c0 * alpha) + (c1 * beta) + (c2 * gamma);
+                // (alpha - v[0], beta - v[1], gamma - v[2])
+                double gamma = (double) (w[0] / area);  // <= this is gamma because it shows
+                double alpha = (double) (w[1] / area);  // how much I "pull" to the v[2]
+                double beta = (double) (w[2] / area);   // in percents, etc. for others
+                Color color = (c[0] * alpha) + (c[1] * beta) + (c[2] * gamma);
 
                 this->draw_pixel({x, y}, color);
             }
 
             // change w value for the next pixel in this row
-            w0 = w0 + dx_w0;
-            w1 = w1 + dx_w1;
-            w2 = w2 + dx_w2;
+            w[0] = w[0] + dw[0].x;
+            w[1] = w[1] + dw[1].x;
+            w[2] = w[2] + dw[2].x;
         }
 
         // update w value to the next
-        w0_begin += dy_w0;
-        w1_begin += dy_w1;
-        w2_begin += dy_w2;
+        w_initial[0] += dw[0].y;
+        w_initial[1] += dw[1].y;
+        w_initial[2] += dw[2].y;
     }
 }
 
-void Window::triangle(vec2fix24_8 v0, vec2fix24_8 v1, vec2fix24_8 v2, Color color)
+void Window::triangle(std::vector<vec2fix24_8> v, Color c)
 {
-    this->triangle(v0, v1, v2, color, color, color);
+    this->triangle({v[0], v[1], v[2]}, {c, c, c});
 }

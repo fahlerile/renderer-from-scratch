@@ -64,7 +64,7 @@ int main()
         if (intensity > 0)
         {
             Color color = light_color * intensity;
-            window.triangle(p[2], p[1], p[0], color);
+            window.triangle({p[2], p[1], p[0]}, color);
         }
     }
 
