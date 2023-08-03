@@ -99,7 +99,6 @@ void Model::render(Window* window, mat4& view_mat, mat4& projection_mat)
             Color light_color = {255, 255, 255};
             float intensity = normal.dot_product(light);
 
-            // TODO: pass depths to the triangle function and implement z_buffer there
             // backface culling (rendering only faces with light)
             if (intensity > 0)
             {

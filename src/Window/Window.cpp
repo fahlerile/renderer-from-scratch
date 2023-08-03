@@ -19,6 +19,15 @@ Window::Window(vec2i actual_dimensions, vec2i logical_dimensions)
     SDL_RenderSetLogicalSize(this->renderer, logical_dimensions.x, logical_dimensions.y);
 
     this->dimensions = logical_dimensions;
+
+    // initialize z_buffer to all +1s (more positive - further away)
+    for (int i = 0; i < logical_dimensions.y; i++)
+    {
+        std::vector<double> temp;
+        for (int j = 0; j < logical_dimensions.x; j++)
+            temp.push_back(1);
+        this->z_buffer.push_back(temp);
+    }
 }
 
 Window::~Window()
@@ -156,7 +165,7 @@ void Window::triangle(std::vector<vec4d> v_dnc, std::vector<Color> c)
     for (int i = 0; i < 3; i++)
     {
         vec2i temp = this->dnc_to_pixel({v_dnc[i].x, v_dnc[i].y});
-        v[i] = (vec4fix) {fixed(temp.x), fixed(temp.y), v[i].z, v[i].w};
+        v[i] = (vec4fix) {fixed(temp.x), fixed(temp.y), fixed(v_dnc[i].z), fixed(v_dnc[i].w)};
     }
 
     // calculate the area of the parallelogram formed by vectors v[0]v[1] and v[0]v[2]
@@ -224,12 +233,29 @@ void Window::triangle(std::vector<vec4d> v_dnc, std::vector<Color> c)
             if (pixel_inside_triangle)
             {
                 // calculate barycentric coordinates for this pixel
+                // need them both for color interpolation and for Z-interpolation
                 // (alpha - v[0], beta - v[1], gamma - v[2])
                 double gamma = (double) (w[0] / area);  // <= this is gamma because it shows
                 double alpha = (double) (w[1] / area);  // how much I "pull" to the v[2]
                 double beta = (double) (w[2] / area);   // in percents, etc. for others
-                Color color = (c[0] * alpha) + (c[1] * beta) + (c[2] * gamma);
 
+                double pixel_z = ((double) v[0].z * alpha) +
+                                 ((double) v[1].z * beta) +
+                                 ((double) v[2].z * gamma);
+                if (y >= 0 && x >= 0)
+                {
+                    // if current pixel is further away that the one already drawn,
+                    // proceed to the next one
+                    if (pixel_z > this->z_buffer[y][x])
+                        continue;
+                    // if need to draw current pixel, write its z-value to z-buffer
+                    else
+                        this->z_buffer[y][x] = pixel_z;
+                }
+                else  // can't actually draw negative pixels :(
+                    continue;
+
+                Color color = (c[0] * alpha) + (c[1] * beta) + (c[2] * gamma);
                 this->draw_pixel({x, y}, color);
             }
 

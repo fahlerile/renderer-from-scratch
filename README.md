@@ -9,14 +9,12 @@ The goal of this project is to create a simple program that can transform vertex
 # TODO
 
 - Add MVP matrices
+    - Model rotation?
     - Camera rotation?
 - Figure out the math behind perspective projection matrix
 - Clean up code
     - Clean up data type madness in `Window` class
-- Make `Window::line()` to accept Normalized Device Coordinates (just like `Window::triangle()`)
-- Implement a Z-buffer
-    - Add a z-buffer array as private member of `Window` class
-    - Each time drawing a pixel, update the z-buffer for this pixel
-        - Update `Window::triangle()`
-        - Update `Window::line()`
+- `Window::line()`
+    - Make `Window::line()` to accept Normalized Device Coordinates (just like `Window::triangle()`)
+    - Implement a Z-buffer for `Window::line()`
 - Try to improve `Window::triangle()` performance (6ms per frame with 2 color-interpolated triangles is very slow)

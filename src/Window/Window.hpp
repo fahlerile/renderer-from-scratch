@@ -27,6 +27,8 @@ private:
     SDL_Renderer *renderer;
     SDL_Event event;
 
+    std::vector<std::vector<double>> z_buffer;  // more positive - further away
+
     vec2i dimensions;
     bool running = true;
 };
