@@ -5,7 +5,7 @@
 class Camera
 {
 public:
-    Camera(vec3d position, double fov);
+    Camera(vec3d position, double fov, double aspect_ratio, double zfar, double znear);
 
     void update_matrices();
 
@@ -15,6 +15,9 @@ public:
 private:
     vec3d position;
     double fov;
+    double aspect_ratio;
+    double zfar;
+    double znear;
 
     mat4 view_mat;
     mat4 projection_mat;

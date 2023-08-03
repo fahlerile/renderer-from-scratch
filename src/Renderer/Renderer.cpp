@@ -3,7 +3,9 @@
 #include "Window/Window.hpp"
 #include "Renderer.hpp"
 
-Renderer::Renderer(Window* window, vec3d camera_pos, double camera_fov) : camera(camera_pos, camera_fov)
+Renderer::Renderer(Window* window, vec3d camera_pos, double camera_fov,
+                   double aspect_ratio, double zfar, double znear) :
+                   camera(camera_pos, camera_fov, aspect_ratio, zfar, znear)
 {
     this->window = window;
 }
