@@ -24,6 +24,7 @@ public:
     operator vec2<double>() const { return {(double) this->x, (double) this->y}; };
     operator vec2<fpm::fixed_24_8>() const { return {fpm::fixed_24_8(this->x), fpm::fixed_24_8(this->y)}; };
 
+    // Takes a cross product of two 2D vectors (or 3D vectors whose z value = 0) and returns it. `x` and `y` values of a resulting vector are always 0. See 2D vector cross product definition in Computer Graphics.
     vec3<T> cross_product(vec2<T> b);
     T dot_product(vec2<T> b);
     vec2<T> normalize();

@@ -2,8 +2,6 @@
 #include <fpm/fixed.hpp>
 #include <stdexcept>
 
-#include <iostream>  // debug
-
 template <typename T>
 struct vec3
 {
@@ -114,5 +112,5 @@ vec3<T> vec3<T>::normalize()
 template <typename T>
 std::string vec3<T>::to_string()
 {
-    return std::string("vec2(" + this->x + ", " + this->y + ", " + this->z + ")");
+    return std::string("vec3(" + this->x + ", " + this->y + ", " + this->z + ")");
 }

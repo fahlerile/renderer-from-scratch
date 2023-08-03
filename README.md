@@ -8,7 +8,7 @@ The goal of this project is to create a simple program that can transform vertex
 
 # TODO
 
-- Add projection matrix
+- Add MVP matrices
 - Implement a Z-buffer
     - Add a z-buffer array as private member of `Window` class
     - Each time drawing a pixel, update the z-buffer for this pixel
