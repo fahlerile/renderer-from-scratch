@@ -6,8 +6,11 @@
 
 #include "Model.hpp"
 #include "Color/Color.hpp"
+#include "Window/Window.hpp"
 #include "utils/vec/vec.hpp"
 #include "utils/mat/mat.hpp"
+
+#include <fpm/ios.hpp>
 
 // Parse .obj file
 Model::Model(std::string path)
@@ -57,55 +60,39 @@ void Model::add_position(vec3d position)
     this->model_matrices.push_back(translation_mat);
 }
 
-// TODO: Add model, view and projection matrices
-void Model::render()
+void Model::render(Window* window, mat4& view_mat, mat4& projection_mat)
 {
     // For every model instance (for every model matrix)
     for (auto model_mat : this->model_matrices)
     {
+        mat4 mvp = projection_mat * view_mat * model_mat;
+
         // For every face in this model
         for (int i = 0; i < this->n_faces(); i++)
         {
             vec3i face = this->face(i);
 
-            // TODO: Add model matrix multiplication here
-            // vertices, world space
+            // Vertices, world space
             // -1 because .obj is 1-indexed
-            vec3d v[3] = {
-                this->vertex(face[0] - 1),
-                this->vertex(face[1] - 1),
-                this->vertex(face[2] - 1)
-            };
+            vec3d v[3];
+            for (int i = 0; i < 3; i++)
+                v[i] = this->vertex(face[i] - 1);
 
             // calculate normal vector for lighting
             vec3d normal = (v[2]-v[0]).cross_product(v[1]-v[0]);
             normal = normal.normalize();
 
-            // TODO: Add projection matrix here
-            // points on the screen, screen space
+            // points on the screen, screen space, normalized device coordinates
             // cast to needed type, discard z coordinate and scale coordinates
-            vec2fix24_8 p[3] = {
-                {
-                    (fpm::fixed_24_8(v[0].x) + 1) * dimensions.x / 2,
-                    (fpm::fixed_24_8(v[0].y) + 1) * dimensions.y / 2
-                },
-                {
-                    (fpm::fixed_24_8(v[1].x) + 1) * dimensions.x / 2,
-                    (fpm::fixed_24_8(v[1].y) + 1) * dimensions.y / 2
-                },
-                {
-                    (fpm::fixed_24_8(v[2].x) + 1) * dimensions.x / 2,
-                    (fpm::fixed_24_8(v[2].y) + 1) * dimensions.y / 2
-                }
-            };
+            vec4fix24_8 p[3];
+            for (int i = 0; i < 3; i++)
+            {
+                p[i] = (vec4fix24_8) (mvp * (vec4d) {v[i].x, v[i].y, v[i].z, 1});
 
-            // transform coordinates to see not a flipped image
-            p[0] = {p[0].x, -p[0].y};
-            p[0].y += dimensions.y - 1;
-            p[1] = {p[1].x, -p[1].y};
-            p[1].y += dimensions.y - 1;
-            p[2] = {p[2].x, -p[2].y};
-            p[2].y += dimensions.y - 1;
+                // Perspective divide
+                for (int j = 0; j < 3; j++)
+                    p[i][j] = p[i][j] / p[i].w;
+            }
 
             // calculate light intensity
             vec3d light = {0, 0, 1};
@@ -117,7 +104,7 @@ void Model::render()
             if (intensity > 0)
             {
                 Color color = light_color * intensity;
-                window.triangle({p[2], p[1], p[0]}, color);
+                window->triangle({p[2], p[1], p[0]}, color);
             }
         }
     }

@@ -1,6 +1,7 @@
 #pragma once
-#include <fpm/fixed.hpp>
 #include <stdexcept>
+#include <fpm/fixed.hpp>
+#include "vec3.hpp"
 
 template <typename T>
 struct vec4
@@ -17,10 +18,10 @@ public:
     T& operator[](int index);
     vec4<T> operator-();
 
-    operator vec4<int>() const { return {(int) this->x, (int) this->y, (int) this->z, (int) this->w}; };
-    operator vec4<float>() const { return {(float) this->x, (float) this->y, (float) this->z, (float) this->w}; };
-    operator vec4<double>() const { return {(double) this->x, (double) this->y, (double) this->z, (double) this->w}; };
-    operator vec4<fpm::fixed_24_8>() const { return vec4<fpm::fixed_24_8> {fpm::fixed_24_8(this->x), fpm::fixed_24_8(this->y), fpm::fixed_16_16(this->z), fpm::fixed_16_16(this->w)}; };
+    operator vec4<int>() const { return vec4<int> {(int) this->x, (int) this->y, (int) this->z, (int) this->w}; };
+    operator vec4<float>() const { return vec4<float> {(float) this->x, (float) this->y, (float) this->z, (float) this->w}; };
+    operator vec4<double>() const { return vec4<double> {(double) this->x, (double) this->y, (double) this->z, (double) this->w}; };
+    operator vec4<fpm::fixed_24_8>() const { return vec4<fpm::fixed_24_8> {fpm::fixed_24_8(this->x), fpm::fixed_24_8(this->y), fpm::fixed_24_8(this->z), fpm::fixed_24_8(this->w)}; };
 
     T dot_product(vec4<T> b);
     vec4<T> normalize();

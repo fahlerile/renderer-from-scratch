@@ -17,6 +17,8 @@ Window::Window(vec2i actual_dimensions, vec2i logical_dimensions)
     }
     SDL_CreateWindowAndRenderer(actual_dimensions.x, actual_dimensions.y, 0, &(this->window), &(this->renderer));
     SDL_RenderSetLogicalSize(this->renderer, logical_dimensions.x, logical_dimensions.y);
+
+    this->dimensions = logical_dimensions;
 }
 
 Window::~Window()
@@ -114,38 +116,48 @@ void Window::line(vec2i pos0, vec2i pos1, Color color)
     }
 }
 
+// Vertices' coordinates should be Device Normalized Coordinates (-1 to 1)
 // Vertices are assumed to be in counter-clockwise direction
 // Uses top-left rasterization rule
 // https://www.youtube.com/watch?v=k5wtuKWmV48
-void Window::triangle(std::vector<vec2fix24_8> v, std::vector<Color> c)
+void Window::triangle(std::vector<vec4d> v_dnc, std::vector<Color> c)
 {
-    using vec2fix = vec2fix24_8;
+    using vec4fix = vec4fix24_8;
     using fixed = fpm::fixed_24_8;
 
     const int decimal_bits = 8;
     const fixed smallest_positive = fixed::from_raw_value(1);
 
     // a, b, p is points
-    auto edge_function([](vec2fix a, vec2fix b, vec2fix p)
+    auto edge_function([](vec4fix a, vec4fix b, vec4fix p)
     {
         // get vectors that represent sides AB and AP
-        vec2fix ab = b - a;
-        vec2fix ap = p - a;
+        vec4fix ab = b - a;
+        vec4fix ap = p - a;
         // get z-component of vec3(ab, 0) x vec3(ap, 0)
-        return ab.cross_product(ap).z;
+        return ((vec2fix24_8) {ab.x, ab.y}).cross_product((vec2fix24_8) {ap.x, ap.y}).z;
     });
 
     // helper function for rasterization rules implementation
     // `start` and `end` are points
-    auto is_top_left([](vec2fix start, vec2fix end)
+    auto is_top_left([](vec4fix start, vec4fix end)
     {
-        vec2fix edge = end - start;
+        vec4fix edge = end - start;
 
         bool is_top = (edge.y == (fixed) {0} && edge.x < (fixed) {0});
         bool is_left = (edge.y < (fixed) {0});
 
         return is_top || is_left;
     });
+
+    // Convert device normalized coordinates to pixel coordinates.
+    // `z` and `w` remain the same
+    vec4fix v[3];
+    for (int i = 0; i < 3; i++)
+    {
+        vec2i temp = this->dnc_to_pixel({v_dnc[i].x, v_dnc[i].y});
+        v[i] = (vec4fix) {fixed(temp.x), fixed(temp.y), v[i].z, v[i].w};
+    }
 
     // calculate the area of the parallelogram formed by vectors v[0]v[1] and v[0]v[2]
     // needed for barycentic coordinate interpolation
@@ -172,13 +184,13 @@ void Window::triangle(std::vector<vec2fix24_8> v, std::vector<Color> c)
     // for each edge and first point (incremental computation)
     vec2f p0 = {min.x + 0.5f, min.y + 0.5f};
     fixed w_initial[3] = {
-        edge_function(v[0], v[1], p0) + bias[0],
-        edge_function(v[1], v[2], p0) + bias[1],
-        edge_function(v[2], v[0], p0) + bias[2]
+        edge_function(v[0], v[1], (vec4fix) {fixed(p0.x), fixed(p0.y), fixed(0), fixed(0)}) + bias[0],
+        edge_function(v[1], v[2], (vec4fix) {fixed(p0.x), fixed(p0.y), fixed(0), fixed(0)}) + bias[1],
+        edge_function(v[2], v[0], (vec4fix) {fixed(p0.x), fixed(p0.y), fixed(0), fixed(0)}) + bias[2]
     };
 
     // set delta w constants
-    const vec2fix24_8 dw[3] = {
+    const vec4fix24_8 dw[3] = {
         {
             v[0].y - v[1].y,
             v[1].x - v[0].x
@@ -234,7 +246,16 @@ void Window::triangle(std::vector<vec2fix24_8> v, std::vector<Color> c)
     }
 }
 
-void Window::triangle(std::vector<vec2fix24_8> v, Color c)
+void Window::triangle(std::vector<vec4d> v, Color c)
 {
     this->triangle({v[0], v[1], v[2]}, {c, c, c});
+}
+
+// Device Normalized Coordinates to pixels
+vec2i Window::dnc_to_pixel(vec2d v_dnc)
+{
+    return {
+        (int) ((v_dnc.x + 1) * this->dimensions.x) / 2,
+        (int) ((1 - v_dnc.y) * this->dimensions.y) / 2,
+    };
 }

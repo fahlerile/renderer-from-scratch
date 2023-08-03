@@ -7,6 +7,8 @@ set(
   src/Window/Window.cpp
   src/Color/Color.cpp
   src/Model/Model.cpp
+  src/Renderer/Renderer.cpp
+  src/Camera/Camera.cpp
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")  # force .exe to build/bin
