@@ -11,6 +11,7 @@ The goal of this project is to create a simple program that can transform vertex
 - Add MVP matrices
     - Add view matrix initialization in `Camera::update_matrices()`
     - Add projection matrix initialization in `Camera::update_matrices()`
+- Figure out the math behind perspective projection matrix
 - Clean up code
     - Clean up data type madness in `Window` class
 - Make `Window::line()` to accept Normalized Device Coordinates (just like `Window::triangle()`)

@@ -11,7 +11,7 @@
 int main()
 {
     const vec2i dimensions = {512, 512};
-    Window window({1024, 1024}, dimensions);
+    Window window({512, 512}, dimensions);
     Renderer renderer(&window, {0, 0, 0}, 45.0);
 
     Model head = Model("./res/models/african_head.obj");

@@ -12,6 +12,10 @@ Camera::Camera(vec3d position, double fov)
 void Camera::update_matrices()
 {
     this->view_mat = mat4(1.0);
+    // negating here because I am basically translating
+    // the whole world rather than only my camera
+    this->view_mat = this->view_mat.translate(-this->position);
+
     this->projection_mat = mat4(1.0);
 }
 
