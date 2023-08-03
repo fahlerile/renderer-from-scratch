@@ -9,6 +9,11 @@ The goal of this project is to create a simple program that can transform vertex
 # TODO
 
 - Add MVP matrices
+    - Add view matrix initialization in `Camera::update_matrices()`
+    - Add projection matrix initialization in `Camera::update_matrices()`
+- Clean up code
+    - Clean up data type madness in `Window` class
+- Make `Window::line()` to accept Normalized Device Coordinates (just like `Window::triangle()`)
 - Implement a Z-buffer
     - Add a z-buffer array as private member of `Window` class
     - Each time drawing a pixel, update the z-buffer for this pixel
