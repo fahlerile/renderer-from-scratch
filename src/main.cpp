@@ -4,6 +4,7 @@
 #include <fpm/fixed.hpp>
 
 #include "Window/Window.hpp"
+#include "Camera/Camera.hpp"
 #include "Renderer/Renderer.hpp"
 #include "Model/Model.hpp"
 #include "Color/Color.hpp"
@@ -15,8 +16,9 @@ int main()
     Window window({512, 512}, dimensions);
     window.clear({128, 204, 204});
 
-    Renderer renderer(&window, {-3, 0, 0}, {0, to_radians(90), 0}, to_radians(45),
-                      dimensions.y / dimensions.x, 10, 0.1);
+    Camera camera({0, 0, 3}, {0, to_radians(180), 0}, to_radians(45),
+                  dimensions.y / dimensions.x, 10, 0.1);
+    Renderer renderer(&window, &camera);
 
     Model head = Model("./res/models/african_head.obj");
     head.add_position({0, 0, 0}, {0, to_radians(0), 0});

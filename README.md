@@ -10,11 +10,7 @@ Uses right-hand coordinate system.
 
 # TODO
 
-- Better light
-    - Fix missing polygons (polygons can be seen but still are not rendered) (P.S add some kind of threshold? `if (intensity + threshold > 0) { render() }`)
-    - `Light` class?
 - Figure out the math behind perspective projection matrix
-- Better camera
-    - Save pointer to camera in Renderer, not the camera itself
+- Add function to add additional light sources, remove light from camera (Some kind of `Light` class?)
 - Try to improve `Window::triangle()` performance (6ms per frame with 2 color-interpolated triangles is very slow)
-- Real-time rendering with moving camera
+    - Real-time rendering with moving camera
