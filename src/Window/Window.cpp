@@ -77,52 +77,54 @@ void Window::line(std::vector<vec4d> p_ndc, std::vector<Color> c)
 {
     // transform ndc to pixel coordinates
     // keep z and w
-    vec4d p[2];
+    vec2i p[2];
+    double p_z[2];
     for (int i = 0; i < 2; i++)
     {
-        vec2d temp = this->ndc_to_pixel({p_ndc[i].x, p_ndc[i].y});
-        p[i] = {temp.x, temp.y, p_ndc[i].z, p_ndc[i].w};
+        p[i] = this->ndc_to_pixel({p_ndc[i].x, p_ndc[i].y});
+        p_z[i] = p_ndc[i].z;
     }
 
-    int x0 = p[0].x;
-    int y0 = p[0].y;
-    int x1 = p[1].x;
-    int y1 = p[1].y;
-
     bool steep = false;
-    if (abs(x1-x0) < abs(y1-y0))  // if slope > 1, transpose
+    if (abs(p[1].x-p[0].x) < abs(p[1].y-p[0].y))  // if slope > 1, transpose
     {
-        std::swap(x0, y0);
-        std::swap(x1, y1);
+        std::swap(p[0].x, p[0].y);
+        std::swap(p[1].x, p[1].y);
         steep = true;
     }
 
-    if (x0 > x1)  // need to render from left to right
+    if (p[0].x > p[1].x)  // need to render from left to right
     {
-        std::swap(x0, x1);
-        std::swap(y0, y1);
+        std::swap(p[0].x, p[1].x);
+        std::swap(p[0].y, p[1].y);
     }
 
-    int step = (y0 > y1) ? -1 : 1;
+    int step = (p[0].y > p[1].y) ? -1 : 1;
 
-    int dx = x1 - x0;
-    int dy = abs(y1 - y0);
+    int dx = p[1].x - p[0].x;
+    int dy = abs(p[1].y - p[0].y);
+    double dz = (p_z[1] - p_z[0]) / dx;
 
-    int x = x0;
-    int y = y0;
+    int x = p[0].x;
+    int y = p[0].y;
+    double z = p_z[0];
 
     int D = 2 * dy - dx;
 
     Color color = c[0];
+    Color color_delta = (c[1] - c[0]) / dx;
 
     if (!steep)
         this->draw_pixel({x, y}, color);
     else  // if steep, de-transpose
         this->draw_pixel({y, x}, color);
 
-    while (x < x1)
+    while (x < p[1].x)
     {
         x++;
+        color += color_delta;
+        z += dz;
+
         if (D < 0)
             D += (2 * dy);
         else

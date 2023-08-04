@@ -1,16 +1,15 @@
 #pragma once
 
+// not unsigned char here because of `Window::line()` (color_delta)
 struct Color
 {
-    unsigned char red = 0;
-    unsigned char green = 0;
-    unsigned char blue = 0;
+    short red = 0;
+    short green = 0;
+    short blue = 0;
 
-    Color();
-    Color(unsigned char red, unsigned char green, unsigned char blue);
-
-    Color operator*(int value);
-    Color operator*(float scalar);
     Color operator*(double scalar);
+    Color operator/(double scalar);
     Color operator+(Color other);
+    Color operator+=(Color other);
+    Color operator-(Color other);
 };
