@@ -11,20 +11,23 @@
 
 int main()
 {
-    const vec2i dimensions = {512, 512};
+    const vec2i dimensions = {50, 50};
     Window window({512, 512}, dimensions);
-    window.clear({128, 204, 204});
+    window.clear({0, 0, 0});
 
     Renderer renderer(&window, {0, 0, -2}, {0, 0, 0}, to_radians(45),
                       dimensions.y / dimensions.x, 10, 0.1);
 
-    Model head = Model("./res/models/african_head.obj");
-    head.add_position({0, 0, 0}, {0, to_radians(135), 0});
-    renderer.add_model(head);
+    // Model head = Model("./res/models/african_head.obj");
+    // head.add_position({0, 0, 0}, {0, to_radians(135), 0});
+    // renderer.add_model(head);
 
-    renderer.render();
+    // renderer.render();
 
-    std::cout << "Rendered!" << std::endl;
+    // std::cout << "Rendered!" << std::endl;
+
+    window.line({{0, 0, -0.5, 0}, {0.5, -0.2, 0, 0}}, {{255, 255, 255}, {255, 0, 0}});
+    window.line({{0, 0, 0, 0}, {0.5, -0.2, -0.5, 0}}, {{0, 0, 255}, {255, 100, 255}});
 
     unsigned int this_frame_time = 0;
     unsigned int delta_time = 0;

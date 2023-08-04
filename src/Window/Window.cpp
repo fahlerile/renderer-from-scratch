@@ -73,45 +73,66 @@ bool Window::is_running()
 
 // Bresenham's algorithm
 // See https://www.ics.uci.edu/~gopi/CS112/web/handouts/OldFiles/Bresenham.pdf
-void Window::line(vec2i pos0, vec2i pos1, Color color)
+void Window::line(std::vector<vec4d> p_dnc, std::vector<Color> c)
 {
-    int x0 = pos0.x;
-    int y0 = pos0.y;
-    int x1 = pos1.x;
-    int y1 = pos1.y;
+    // convert device normalized coordinates to pixel ones
+    // z and y components remain the same
+    vec4d p[2];
+    for (int i = 0; i < 2; i++)
+    {
+        vec2d temp = this->dnc_to_pixel({p_dnc[i].x, p_dnc[i].y});
+        p[i] = {temp.x, temp.y, p_dnc[i].z, p_dnc[i].w};
+    }
 
     bool steep = false;
-    if (abs(x1-x0) < abs(y1-y0))  // if slope > 1, transpose
+    if (abs(p[1].x-p[0].x) < abs(p[1].y-p[0].y))  // if slope > 1, transpose
     {
-        std::swap(x0, y0);
-        std::swap(x1, y1);
+        std::swap(p[0].x, p[0].y);
+        std::swap(p[1].x, p[1].y);
         steep = true;
     }
 
-    if (x0 > x1)  // need to render from left to right
+    if (p[0].x > p[1].x)  // need to render from left to right
     {
-        std::swap(x0, x1);
-        std::swap(y0, y1);
+        std::swap(p[0].x, p[1].x);
+        std::swap(p[0].y, p[1].y);
     }
 
-    int step = (y0 > y1) ? -1 : 1;
+    int step = (p[0].y > p[1].y) ? -1 : 1;
 
-    int dx = x1 - x0;
-    int dy = abs(y1 - y0);
+    int dx = p[1].x - p[0].x;
+    int dy = abs(p[1].y - p[0].y);
+    double dz = (p[1].z - p[0].z) / dx;
 
-    int x = x0;
-    int y = y0;
+    int x = p[0].x;
+    int y = p[0].y;
+    double z = p[0].z;
 
     int D = 2 * dy - dx;
 
-    if (!steep)
-        this->draw_pixel({x, y}, color);
-    else  // if steep, de-transpose
-        this->draw_pixel({y, x}, color);
+    Color color = c[0];
+    // color delta (can be negative, so signed color here)
+    SignedColor dcolor = ((SignedColor) c[1] - (SignedColor) c[0]) / dx;
 
-    while (x < x1)
+    if (!steep && y < this->dimensions.y && x < this->dimensions.x && z < this->z_buffer[y][x])
+    {
+        this->draw_pixel({x, y}, color);
+        this->z_buffer[y][x] = z;
+    }
+
+    // if steep, de-transpose
+    else if (steep && y < this->dimensions.x && x < this->dimensions.y && z < this->z_buffer[x][y])
+    {
+        this->draw_pixel({y, x}, color);
+        this->z_buffer[x][y] = z;
+    }
+
+    while (x < p[1].x)
     {
         x++;
+        z = z + dz;
+        color = color + dcolor;
+
         if (D < 0)
             D += (2 * dy);
         else
@@ -119,11 +140,23 @@ void Window::line(vec2i pos0, vec2i pos1, Color color)
             y += step;
             D += (2 * (dy - dx));
         }
-        if (!steep)
+
+        if (!steep && y < this->dimensions.y && x < this->dimensions.x && z < this->z_buffer[y][x])
+        {
             this->draw_pixel({x, y}, color);
-        else  // if steep, de-transpose
+            this->z_buffer[y][x] = z;
+        }
+        else if (steep && y < this->dimensions.x && x < this->dimensions.y && z < this->z_buffer[x][y])
+        {
             this->draw_pixel({y, x}, color);
+            this->z_buffer[x][y] = z;
+        }
     }
+}
+
+void Window::line(std::vector<vec4d> p_dnc, Color c)
+{
+    this->line(p_dnc, {c, c});
 }
 
 // Vertices' coordinates should be Device Normalized Coordinates (-1 to 1)

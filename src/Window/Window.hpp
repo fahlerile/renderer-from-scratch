@@ -14,18 +14,19 @@ public:
     void swap_buffers();
 
     void draw_pixel(vec2i position, Color color);
-    void line(vec2i pos0, vec2i pos1, Color color);
+    void line(std::vector<vec4d> p_dnc, std::vector<Color> c);
+    void line(std::vector<vec4d> p_dnc, Color c);
     void triangle(std::vector<vec4d> v_dnc, std::vector<Color> c);
     void triangle(std::vector<vec4d> v_dnc, Color c);
 
     bool is_running();
+    std::vector<std::vector<double>> z_buffer;  // more positive - further away
 
 private:
     SDL_Window *sdl_window;
     SDL_Renderer *sdl_renderer;
     SDL_Event sdl_event;
 
-    std::vector<std::vector<double>> z_buffer;  // more positive - further away
 
     vec2i dimensions;
     bool running = true;

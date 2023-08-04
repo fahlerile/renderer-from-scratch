@@ -1,5 +1,7 @@
 #pragma once
 
+struct SignedColor;
+
 struct Color
 {
     unsigned char red = 0;
@@ -9,8 +11,24 @@ struct Color
     Color();
     Color(unsigned char red, unsigned char green, unsigned char blue);
 
-    Color operator*(int value);
-    Color operator*(float scalar);
-    Color operator*(double scalar);
     Color operator+(Color other);
+    Color operator-(Color other);
+
+    Color operator*(double scalar);
+    Color operator/(double scalar);
+
+    Color operator+(SignedColor other);
+
+    operator SignedColor();
+};
+
+// Used in `Window::line()` as color delta for interpolation
+struct SignedColor
+{
+    short red = 0;
+    short green = 0;
+    short blue = 0;
+
+    SignedColor operator-(SignedColor other);
+    SignedColor operator/(double scalar);
 };

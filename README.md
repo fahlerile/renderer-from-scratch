@@ -10,9 +10,6 @@ Uses right-hand coordinate system.
 
 # TODO
 
-- `Window::line()`
-    - Make `Window::line()` to accept Normalized Device Coordinates (just like `Window::triangle()`)
-    - Implement a Z-buffer for `Window::line()`
 - Figure out the math behind perspective projection matrix
 - Better light
     - Make "invisible" light pointing from the camera (to render faces that can be seen and to not render faces that cannot be seen)
