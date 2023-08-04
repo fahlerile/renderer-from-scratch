@@ -17,6 +17,7 @@ public:
     vec4d column(size_t idx);
 
     mat4 translate(vec3d position);
+    mat4 rotate(vec3d angles);
     vec4d operator*(vec4d b);
     mat4 operator*(mat4 b);
 
@@ -97,6 +98,53 @@ inline mat4 mat4::translate(vec3d position)
     for (int i = 0; i < 3; i++)
         return_mat.data[i][3] = position[i];
     return return_mat;
+}
+
+// Apply rotation transformation to this matrix
+// (NOTE: order of transformations: transformation currently in this matrix -> this rotation)
+// `angles` - {x, y, z} in radians
+// https://en.wikipedia.org/wiki/Rotation_matrix
+inline mat4 mat4::rotate(vec3d angles)
+{
+    double alpha = angles[0];
+    double beta = angles[1];
+    double gamma = angles[2];
+
+    double sin_a = std::sin(alpha);
+    double sin_b = std::sin(beta);
+    double sin_g = std::sin(gamma);
+    double cos_a = std::cos(alpha);
+    double cos_b = std::cos(beta);
+    double cos_g = std::cos(gamma);
+
+    mat4 rotation;
+
+    // +--------------+---------------------------------+---------------------------------+---+
+    // | cos(β)cos(γ) | sin(α)sin(β)cos(γ)-cos(α)sin(γ) | cos(α)sin(β)cos(γ)+sin(α)sin(γ) | 0 |
+    // | cos(β)sin(γ) | sin(α)sin(β)sin(γ)+cos(α)cos(γ) | cos(α)sin(β)sin(γ)-sin(α)cos(γ) | 0 |
+    // | -sin(β)      | sin(α)cos(β)                    | cos(α)cos(β)                    | 0 |
+    // | 0            | 0                               | 0                               | 1 |
+    // +--------------+---------------------------------+---------------------------------+---+
+
+    rotation.data[0][0] = cos_b * cos_g;
+    rotation.data[0][1] = sin_a * sin_b * cos_g - cos_a * sin_g;
+    rotation.data[0][2] = cos_a * sin_b * cos_g + sin_a * sin_g;
+    rotation.data[0][3] = 0;
+    rotation.data[1][0] = cos_b * sin_g;
+    rotation.data[1][1] = sin_a * sin_b * sin_g + cos_a * cos_g;
+    rotation.data[1][2] = cos_a * sin_b * sin_g - sin_a * cos_g;
+    rotation.data[1][3] = 0;
+    rotation.data[2][0] = -sin_b;
+    rotation.data[2][1] = sin_a * cos_b;
+    rotation.data[2][2] = cos_a * cos_b;
+    rotation.data[2][3] = 0;
+    rotation.data[3][0] = 0;
+    rotation.data[3][1] = 0;
+    rotation.data[3][2] = 0;
+    rotation.data[3][3] = 1;
+
+    // applying this rotation matrix to whats already in current matrix
+    return rotation * (*this);
 }
 
 // Pretty-print this matrix

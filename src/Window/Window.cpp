@@ -242,7 +242,9 @@ void Window::triangle(std::vector<vec4d> v_dnc, std::vector<Color> c)
                 double pixel_z = ((double) v[0].z * alpha) +
                                  ((double) v[1].z * beta) +
                                  ((double) v[2].z * gamma);
-                if (y >= 0 && x >= 0)
+
+                // prevent out of bounds access of zbuffer (segfault)
+                if (y >= 0 && x >= 0 && y < this->dimensions.y && x < this->dimensions.x)
                 {
                     // if current pixel is further away that the one already drawn,
                     // proceed to the next one
@@ -252,7 +254,7 @@ void Window::triangle(std::vector<vec4d> v_dnc, std::vector<Color> c)
                     else
                         this->z_buffer[y][x] = pixel_z;
                 }
-                else  // can't actually draw negative pixels :(
+                else  // can't actually draw pixels outside of the screen :(
                     continue;
 
                 Color color = (c[0] * alpha) + (c[1] * beta) + (c[2] * gamma);

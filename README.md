@@ -9,7 +9,6 @@ The goal of this project is to create a simple program that can transform vertex
 # TODO
 
 - Add MVP matrices
-    - Model rotation?
     - Camera rotation?
 - Figure out the math behind perspective projection matrix
 - Clean up code
@@ -17,4 +16,5 @@ The goal of this project is to create a simple program that can transform vertex
 - `Window::line()`
     - Make `Window::line()` to accept Normalized Device Coordinates (just like `Window::triangle()`)
     - Implement a Z-buffer for `Window::line()`
+- Better light?
 - Try to improve `Window::triangle()` performance (6ms per frame with 2 color-interpolated triangles is very slow)

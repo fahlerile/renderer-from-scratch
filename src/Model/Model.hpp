@@ -10,7 +10,7 @@ class Model
 public:
     Model(std::string path);
 
-    void add_position(vec3d position);
+    void add_position(vec3d position, vec3d rot_angles);
     void render(Window* window, mat4& view_mat, mat4& projection_mat);
 
     vec3i face(int index);

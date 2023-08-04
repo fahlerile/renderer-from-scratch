@@ -7,6 +7,7 @@
 #include "Renderer/Renderer.hpp"
 #include "Model/Model.hpp"
 #include "Color/Color.hpp"
+#include "utils/to_radians.hpp"
 
 int main()
 {
@@ -15,7 +16,7 @@ int main()
     Renderer renderer(&window, {0, 0, -1}, 45, dimensions.y / dimensions.x, 10, 0.1);
 
     Model head = Model("./res/models/african_head.obj");
-    head.add_position({0, 0, 0});
+    head.add_position({0, 0, 0}, {0, to_radians(135), 0});
     renderer.add_model(head);
 
     renderer.render();
@@ -25,15 +26,6 @@ int main()
     unsigned int this_frame_time = 0;
     unsigned int delta_time = 0;
     unsigned int prev_frame_time = 0;
-
-    // window.triangle(
-    //     {
-    //         (vec4d) {0, 0.5, 0, 1},
-    //         (vec4d) {-0.5, -0.5, 0, 1},
-    //         (vec4d) {0.5, -0.5, 0, 1}
-    //     },
-    //     {255, 255, 255}
-    // );
 
     while (window.is_running())
     {

@@ -53,11 +53,14 @@ Model::Model(std::string path)
         throw std::invalid_argument("Failed to open file " + path);
 }
 
-void Model::add_position(vec3d position)
+// `rot_angles` in radians
+void Model::add_position(vec3d position, vec3d rot_angles)
 {
-    mat4 translation_mat(1.0);
-    translation_mat = translation_mat.translate(position);
-    this->model_matrices.push_back(translation_mat);
+    mat4 transform(1.0);
+    transform = transform.translate(position);
+    transform = transform.rotate(rot_angles);
+
+    this->model_matrices.push_back(transform);
 }
 
 void Model::render(Window* window, mat4& view_mat, mat4& projection_mat)
@@ -95,7 +98,7 @@ void Model::render(Window* window, mat4& view_mat, mat4& projection_mat)
             }
 
             // calculate light intensity
-            vec3d light = {0, 0, 1};
+            vec3d light = {-1, 0, 0};
             Color light_color = {255, 255, 255};
             float intensity = normal.dot_product(light);
 
