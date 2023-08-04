@@ -3,12 +3,12 @@
 #include "utils/mat/mat.hpp"
 
 // `aspect_ratio` - screen_height/screen_width
-Camera::Camera(vec3d position, vec3d rot_angles, double fov,
+Camera::Camera(vec3d position, vec3d rot_angles_rad, double fov_rad,
                double aspect_ratio, double zfar, double znear)
 {
     this->position = position;
-    this->rot_angles = rot_angles;
-    this->fov = fov;
+    this->rot_angles = rot_angles_rad;
+    this->fov = fov_rad;
     this->aspect_ratio = aspect_ratio;
     this->zfar = zfar;
     this->znear = znear;

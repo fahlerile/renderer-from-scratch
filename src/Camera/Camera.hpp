@@ -5,7 +5,7 @@
 class Camera
 {
 public:
-    Camera(vec3d position, vec3d rot_angles, double fov,
+    Camera(vec3d position, vec3d rot_angles_rad, double fov_rad,
            double aspect_ratio, double zfar, double znear);
 
     void update_matrices();
