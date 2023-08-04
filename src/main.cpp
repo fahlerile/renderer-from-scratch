@@ -15,11 +15,11 @@ int main()
     Window window({512, 512}, dimensions);
     window.clear({128, 204, 204});
 
-    Renderer renderer(&window, {0, 0, -2}, {0, 0, 0}, to_radians(45),
+    Renderer renderer(&window, {-3, 0, 0}, {0, to_radians(90), 0}, to_radians(45),
                       dimensions.y / dimensions.x, 10, 0.1);
 
     Model head = Model("./res/models/african_head.obj");
-    head.add_position({0, 0, 0}, {0, to_radians(135), 0});
+    head.add_position({0, 0, 0}, {0, to_radians(0), 0});
     renderer.add_model(head);
 
     renderer.render();

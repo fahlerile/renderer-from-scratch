@@ -2,6 +2,8 @@
 #include "utils/vec/vec3.hpp"
 #include "utils/mat/mat.hpp"
 
+#include <iostream>
+
 // `aspect_ratio` - screen_height/screen_width
 Camera::Camera(vec3d position, vec3d rot_angles_rad, double fov_rad,
                double aspect_ratio, double zfar, double znear)
@@ -12,11 +14,17 @@ Camera::Camera(vec3d position, vec3d rot_angles_rad, double fov_rad,
     this->aspect_ratio = aspect_ratio;
     this->zfar = zfar;
     this->znear = znear;
-    this->update_matrices();
+    this->front = {0, 0, 1, 1};
+    this->update();
 }
 
-void Camera::update_matrices()
+void Camera::update()
 {
+    // update camera front vector
+    mat4 front_rotation(1.0);
+    front_rotation = front_rotation.rotate(this->rot_angles);
+    this->front = front_rotation * this->front;
+
     this->view_mat = mat4(1.0);
     // negating here because I am basically translating (and rotating)
     // the whole world rather than only my camera
@@ -42,4 +50,9 @@ mat4 Camera::get_view_mat()
 mat4 Camera::get_projection_mat()
 {
     return this->projection_mat;
+}
+
+vec4d Camera::get_front_vec()
+{
+    return this->front;
 }

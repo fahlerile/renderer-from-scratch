@@ -61,7 +61,7 @@ void Model::add_position(vec3d position, vec3d rot_angles)
     this->model_matrices.push_back(transform);
 }
 
-void Model::render(Window* window, mat4& view_mat, mat4& projection_mat)
+void Model::render(Window* window, mat4& view_mat, mat4& projection_mat, vec4d& camera_front)
 {
     // For every model instance (for every model matrix)
     for (auto model_mat : this->model_matrices)
@@ -96,14 +96,13 @@ void Model::render(Window* window, mat4& view_mat, mat4& projection_mat)
             }
 
             // calculate light intensity
-            vec3d light = {-1, 0, 0};
             Color light_color = {255, 255, 255};
-            float intensity = normal.dot_product(light);
+            float visible = normal.dot_product({camera_front.x, camera_front.y, camera_front.z});
 
             // backface culling (rendering only faces with light)
-            if (intensity > 0)
+            if (visible > 0)
             {
-                Color color = light_color * intensity;
+                Color color = light_color * visible;
                 window->triangle({p[2], p[1], p[0]}, color);
             }
         }
