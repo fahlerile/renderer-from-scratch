@@ -20,8 +20,8 @@ void Camera::update_matrices()
     this->view_mat = mat4(1.0);
     // negating here because I am basically translating (and rotating)
     // the whole world rather than only my camera
-    this->view_mat = this->view_mat.translate(-this->position);
     this->view_mat = this->view_mat.rotate(-this->rot_angles);
+    this->view_mat = this->view_mat.translate(-this->position);
 
     // https://www.youtube.com/watch?v=EqNcqBdrNyI
     this->projection_mat = mat4(1.0);

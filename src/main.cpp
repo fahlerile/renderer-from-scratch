@@ -17,7 +17,7 @@ int main()
                       to_radians(60), dimensions.y / dimensions.x, 10, 0.1);
 
     Model head = Model("./res/models/african_head.obj");
-    head.add_position({0, 0, 0}, {0, to_radians(135), 0});
+    head.add_position({0, 0, 0}, {0, to_radians(120), 0});
     renderer.add_model(head);
 
     renderer.render();
