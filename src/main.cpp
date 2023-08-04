@@ -13,17 +13,20 @@
 int main()
 {
     const vec2i dimensions = {512, 512};
-    Window window({512, 512}, dimensions);
-    window.clear({128, 204, 204});
 
+    // Initialize needed classes
+    Window window({512, 512}, dimensions);
     Camera camera({0, 0, 3}, {0, to_radians(180), 0}, to_radians(45),
                   dimensions.y / dimensions.x, 10, 0.1);
     Renderer renderer(&window, &camera);
 
+    // load the model
     Model head = Model("./res/models/african_head.obj");
     head.add_position({0, 0, 0}, {0, to_radians(0), 0});
+
     renderer.add_model(head);
 
+    window.clear({128, 204, 204});
     renderer.render();
 
     std::cout << "Rendered!" << std::endl;
@@ -40,8 +43,6 @@ int main()
         // std::cout << "Frametime: " << delta_time << std::endl;
 
         window.poll_events();
-        // window.clear({128, 204, 204});
-
         window.swap_buffers();
 
         prev_frame_time = this_frame_time;
