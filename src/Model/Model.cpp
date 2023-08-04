@@ -57,8 +57,8 @@ Model::Model(std::string path)
 void Model::add_position(vec3d position, vec3d rot_angles)
 {
     mat4 transform(1.0);
-    transform = transform.translate(position);
     transform = transform.rotate(rot_angles);
+    transform = transform.translate(position);
 
     this->model_matrices.push_back(transform);
 }

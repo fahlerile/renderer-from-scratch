@@ -2,13 +2,16 @@
 
 The goal of this project is to create a simple program that can transform vertex data from .obj file to an image using as little to no libraries as possible.
 
+Uses right-hand coordinate system.
+
 ## Libraries Used:
 - [SDL2](https://www.libsdl.org/) because I don't want to handle windows by myself. The only features of SDL2 I am using are window handling and drawing pixels.
 - [fpm](https://github.com/MikeLankamp/fpm) (fixed-point math) because I don't want to reinvent a math library.
 
 # TODO
 
-- Position vectors in `Camera` and `Model` are modifying different axes? (`z` in the first one is not the same axis as in the second one)
+- Perspective matrix bug if `fov` > 45?
+- Crash when camera position is `{0, 0, 1}`
 - Figure out the math behind perspective projection matrix
 - `Window::line()`
     - Make `Window::line()` to accept Normalized Device Coordinates (just like `Window::triangle()`)
