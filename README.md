@@ -25,5 +25,8 @@ cd bin
 
 - Figure out the math behind perspective projection matrix
 - Add function to add additional light sources, remove light from camera (Some kind of `Light` class?)
+- Add 4-vertex per a face .obj files
 - Try to improve `Window::triangle()` performance (6ms per frame with 2 color-interpolated triangles is very slow)
-    - Real-time rendering with moving camera
+- Real-time rendering with moving camera
+- Add texture interpolation
+- Add material support (.mtl)
