@@ -24,8 +24,6 @@ int main()
 
     renderer.render();
 
-    window.line({{0, 0, 0, 1}, {0.5, 0.5, 0, 1}}, {{255, 0, 0}, {0, 0, 0}});
-
     std::cout << "Rendered!" << std::endl;
 
     unsigned int this_frame_time = 0;

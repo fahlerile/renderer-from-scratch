@@ -20,13 +20,13 @@ public:
     void triangle(std::vector<vec4d> v_dnc, Color c);
 
     bool is_running();
+    std::vector<std::vector<double>> z_buffer;  // more positive - further away
 
 private:
     SDL_Window *sdl_window;
     SDL_Renderer *sdl_renderer;
     SDL_Event sdl_event;
 
-    std::vector<std::vector<double>> z_buffer;  // more positive - further away
 
     vec2i dimensions;
     bool running = true;

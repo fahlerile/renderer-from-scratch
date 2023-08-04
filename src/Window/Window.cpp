@@ -86,17 +86,23 @@ void Window::line(std::vector<vec4d> p_ndc, std::vector<Color> c)
     }
 
     bool steep = false;
-    if (abs(p[1].x-p[0].x) < abs(p[1].y-p[0].y))  // if slope > 1, transpose
+    if (abs(p[1].x-p[0].x) < abs(p[1].y-p[0].y) || p[0].x > p[1].x)
     {
-        std::swap(p[0].x, p[0].y);
-        std::swap(p[1].x, p[1].y);
-        steep = true;
-    }
+        if (abs(p[1].x-p[0].x) < abs(p[1].y-p[0].y))  // if slope > 1, transpose
+        {
+            std::swap(p[0].x, p[0].y);
+            std::swap(p[1].x, p[1].y);
+            steep = true;
+        }
 
-    if (p[0].x > p[1].x)  // need to render from left to right
-    {
-        std::swap(p[0].x, p[1].x);
-        std::swap(p[0].y, p[1].y);
+        if (p[0].x > p[1].x)  // need to render from left to right
+        {
+            std::swap(p[0].x, p[1].x);
+            std::swap(p[0].y, p[1].y);
+        }
+
+        std::swap(p_z[0], p_z[1]);
+        std::swap(c[0], c[1]);
     }
 
     int step = (p[0].y > p[1].y) ? -1 : 1;
@@ -114,10 +120,17 @@ void Window::line(std::vector<vec4d> p_ndc, std::vector<Color> c)
     Color color = c[0];
     Color color_delta = (c[1] - c[0]) / dx;
 
-    if (!steep)
+    if (!steep && x < this->dimensions.x && y < this->dimensions.y && z < this->z_buffer[y][x])
+    {
         this->draw_pixel({x, y}, color);
-    else  // if steep, de-transpose
+        this->z_buffer[y][x] = z;
+    }
+    // if steep, de-transpose
+    else if (steep && x < this->dimensions.y && y < this->dimensions.x && z < this->z_buffer[x][y])
+    {
         this->draw_pixel({y, x}, color);
+        this->z_buffer[x][y] = z;
+    }
 
     while (x < p[1].x)
     {
@@ -132,10 +145,18 @@ void Window::line(std::vector<vec4d> p_ndc, std::vector<Color> c)
             y += step;
             D += (2 * (dy - dx));
         }
-        if (!steep)
+
+        if (!steep && x < this->dimensions.x && y < this->dimensions.y && z < this->z_buffer[y][x])
+        {
             this->draw_pixel({x, y}, color);
-        else  // if steep, de-transpose
+            this->z_buffer[y][x] = z;
+        }
+        // if steep, de-transpose
+        else if (steep && x < this->dimensions.y && y < this->dimensions.x && z < this->z_buffer[x][y])
+        {
             this->draw_pixel({y, x}, color);
+            this->z_buffer[x][y] = z;
+        }
     }
 }
 
