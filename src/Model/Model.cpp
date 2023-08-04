@@ -10,8 +10,6 @@
 #include "utils/vec/vec.hpp"
 #include "utils/mat/mat.hpp"
 
-#include <fpm/ios.hpp>
-
 // Parse .obj file
 Model::Model(std::string path)
 {

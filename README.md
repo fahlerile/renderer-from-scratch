@@ -11,7 +11,7 @@ Uses right-hand coordinate system.
 # TODO
 
 - Perspective matrix bug if `fov` > 45?
-- Crash when camera position is `{0, 0, 1}`
+- Crash when camera position is `{0, 0, 1}` (so head can't be seen)
 - Figure out the math behind perspective projection matrix
 - `Window::line()`
     - Make `Window::line()` to accept Normalized Device Coordinates (just like `Window::triangle()`)
