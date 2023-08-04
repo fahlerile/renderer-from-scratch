@@ -18,17 +18,18 @@ public:
     void triangle(std::vector<vec4d> v_dnc, std::vector<Color> c);
     void triangle(std::vector<vec4d> v_dnc, Color c);
 
-    vec2i dnc_to_pixel(vec2d v_dnc);
-
     bool is_running();
 
 private:
-    SDL_Window *window;
-    SDL_Renderer *renderer;
-    SDL_Event event;
+    SDL_Window *sdl_window;
+    SDL_Renderer *sdl_renderer;
+    SDL_Event sdl_event;
 
     std::vector<std::vector<double>> z_buffer;  // more positive - further away
 
     vec2i dimensions;
     bool running = true;
+
+    vec2i dnc_to_pixel(vec2d v_dnc);
+    void clear_z_buffer();
 };

@@ -8,9 +8,8 @@ The goal of this project is to create a simple program that can transform vertex
 
 # TODO
 
+- Position vectors in `Camera` and `Model` are modifying different axes? (`z` in the first one is not the same axis as in the second one)
 - Figure out the math behind perspective projection matrix
-- Clean up code
-    - Clean up data type madness in `Window` class
 - `Window::line()`
     - Make `Window::line()` to accept Normalized Device Coordinates (just like `Window::triangle()`)
     - Implement a Z-buffer for `Window::line()`
