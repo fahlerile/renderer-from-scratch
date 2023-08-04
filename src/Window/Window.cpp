@@ -73,12 +73,21 @@ bool Window::is_running()
 
 // Bresenham's algorithm
 // See https://www.ics.uci.edu/~gopi/CS112/web/handouts/OldFiles/Bresenham.pdf
-void Window::line(vec2i pos0, vec2i pos1, Color color)
+void Window::line(std::vector<vec4d> p_ndc, std::vector<Color> c)
 {
-    int x0 = pos0.x;
-    int y0 = pos0.y;
-    int x1 = pos1.x;
-    int y1 = pos1.y;
+    // transform ndc to pixel coordinates
+    // keep z and w
+    vec4d p[2];
+    for (int i = 0; i < 2; i++)
+    {
+        vec2d temp = this->ndc_to_pixel({p_ndc[i].x, p_ndc[i].y});
+        p[i] = {temp.x, temp.y, p_ndc[i].z, p_ndc[i].w};
+    }
+
+    int x0 = p[0].x;
+    int y0 = p[0].y;
+    int x1 = p[1].x;
+    int y1 = p[1].y;
 
     bool steep = false;
     if (abs(x1-x0) < abs(y1-y0))  // if slope > 1, transpose
@@ -104,6 +113,8 @@ void Window::line(vec2i pos0, vec2i pos1, Color color)
 
     int D = 2 * dy - dx;
 
+    Color color = c[0];
+
     if (!steep)
         this->draw_pixel({x, y}, color);
     else  // if steep, de-transpose
@@ -124,6 +135,11 @@ void Window::line(vec2i pos0, vec2i pos1, Color color)
         else  // if steep, de-transpose
             this->draw_pixel({y, x}, color);
     }
+}
+
+void Window::line(std::vector<vec4d> p_ndc, Color c)
+{
+    this->line(p_ndc, {c, c});
 }
 
 // Vertices' coordinates should be Device Normalized Coordinates (-1 to 1)
@@ -167,7 +183,7 @@ void Window::triangle(std::vector<vec4d> v_dnc, std::vector<Color> c)
     vec4fix24_8 v[3];
     for (int i = 0; i < 3; i++)
     {
-        vec2i temp = this->dnc_to_pixel({v_dnc[i].x, v_dnc[i].y});
+        vec2i temp = this->ndc_to_pixel({v_dnc[i].x, v_dnc[i].y});
         v[i] = (vec4fix24_8) {fpm::fixed_24_8(temp.x), fpm::fixed_24_8(temp.y), fpm::fixed_24_8(v_dnc[i].z), fpm::fixed_24_8(v_dnc[i].w)};
     }
 
@@ -284,7 +300,7 @@ void Window::triangle(std::vector<vec4d> v, Color c)
 }
 
 // Device Normalized Coordinates to pixels
-vec2i Window::dnc_to_pixel(vec2d v_dnc)
+vec2i Window::ndc_to_pixel(vec2d v_dnc)
 {
     return {
         (int) ((v_dnc.x + 1) * this->dimensions.x) / 2,

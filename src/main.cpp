@@ -15,14 +15,16 @@ int main()
     Window window({512, 512}, dimensions);
     window.clear({128, 204, 204});
 
-    Renderer renderer(&window, {0, 0, -2}, {0, 0, 0}, to_radians(45),
-                      dimensions.y / dimensions.x, 10, 0.1);
+    // Renderer renderer(&window, {0, 0, -2}, {0, 0, 0}, to_radians(45),
+    //                   dimensions.y / dimensions.x, 10, 0.1);
 
-    Model head = Model("./res/models/african_head.obj");
-    head.add_position({0, 0, 0}, {0, to_radians(135), 0});
-    renderer.add_model(head);
+    // Model head = Model("./res/models/african_head.obj");
+    // head.add_position({0, 0, 0}, {0, to_radians(135), 0});
+    // renderer.add_model(head);
 
-    renderer.render();
+    // renderer.render();
+
+    window.line({{0, 0, 0, 1}, {0.5, 0.5, 0, 1}}, {{255, 0, 0}, {255, 255, 255}});
 
     std::cout << "Rendered!" << std::endl;
 

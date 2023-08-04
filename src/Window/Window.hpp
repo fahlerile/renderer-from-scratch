@@ -14,7 +14,8 @@ public:
     void swap_buffers();
 
     void draw_pixel(vec2i position, Color color);
-    void line(vec2i pos0, vec2i pos1, Color color);
+    void line(std::vector<vec4d> p_ndc, std::vector<Color> c);
+    void line(std::vector<vec4d> p_ndc, Color c);
     void triangle(std::vector<vec4d> v_dnc, std::vector<Color> c);
     void triangle(std::vector<vec4d> v_dnc, Color c);
 
@@ -30,6 +31,6 @@ private:
     vec2i dimensions;
     bool running = true;
 
-    vec2i dnc_to_pixel(vec2d v_dnc);
+    vec2i ndc_to_pixel(vec2d v_dnc);
     void clear_z_buffer();
 };

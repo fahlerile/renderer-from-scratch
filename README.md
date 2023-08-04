@@ -11,7 +11,7 @@ Uses right-hand coordinate system.
 # TODO
 
 - `Window::line()`
-    - Make `Window::line()` to accept Normalized Device Coordinates (just like `Window::triangle()`)
+    - Add color & z interpolation
     - Implement a Z-buffer for `Window::line()`
 - Figure out the math behind perspective projection matrix
 - Better light
