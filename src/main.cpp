@@ -13,7 +13,8 @@ int main()
 {
     const vec2i dimensions = {512, 512};
     Window window({512, 512}, dimensions);
-    Renderer renderer(&window, {0, 0, -1}, 45, dimensions.y / dimensions.x, 10, 0.1);
+    Renderer renderer(&window, {0, 0, -1}, {to_radians(45), 0, 0},
+                      45, dimensions.y / dimensions.x, 10, 0.1);
 
     Model head = Model("./res/models/african_head.obj");
     head.add_position({0, 0, 0}, {0, to_radians(135), 0});

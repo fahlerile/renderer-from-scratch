@@ -8,8 +8,6 @@ The goal of this project is to create a simple program that can transform vertex
 
 # TODO
 
-- Add MVP matrices
-    - Camera rotation?
 - Figure out the math behind perspective projection matrix
 - Clean up code
     - Clean up data type madness in `Window` class

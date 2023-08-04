@@ -7,8 +7,8 @@
 class Renderer
 {
 public:
-    Renderer(Window* window, vec3d camera_pos, double camera_fov,
-             double aspect_ratio, double zfar, double znear);
+    Renderer(Window* window, vec3d camera_pos, vec3d camera_rot_angles,
+             double camera_fov, double aspect_ratio, double zfar, double znear);
 
     void add_model(Model model);
     void render();

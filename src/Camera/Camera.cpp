@@ -3,10 +3,11 @@
 #include "utils/mat/mat.hpp"
 
 // `aspect_ratio` - screen_height/screen_width
-Camera::Camera(vec3d position, double fov, double aspect_ratio,
-               double zfar, double znear)
+Camera::Camera(vec3d position, vec3d rot_angles, double fov,
+               double aspect_ratio, double zfar, double znear)
 {
     this->position = position;
+    this->rot_angles = rot_angles;
     this->fov = fov;
     this->aspect_ratio = aspect_ratio;
     this->zfar = zfar;
@@ -17,9 +18,10 @@ Camera::Camera(vec3d position, double fov, double aspect_ratio,
 void Camera::update_matrices()
 {
     this->view_mat = mat4(1.0);
-    // negating posiiton here because I am basically translating
+    // negating here because I am basically translating (and rotating)
     // the whole world rather than only my camera
     this->view_mat = this->view_mat.translate(-this->position);
+    this->view_mat = this->view_mat.rotate(-this->rot_angles);
 
     // https://www.youtube.com/watch?v=EqNcqBdrNyI
     this->projection_mat = mat4(1.0);
