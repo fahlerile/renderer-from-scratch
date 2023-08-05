@@ -1,8 +1,10 @@
 # renderer-from-scratch
 
-The goal of this project is to create a simple (relatively) program that can transform vertex data from .obj file to an image using as little to no libraries as possible (that's the reason why I don't use GLM).
+This is the biggest wheel I have ever reinvented.
 
-Uses right-hand coordinate system.
+The goal of this project is to create a simple (relatively) program that can transform vertex data from .obj file to an image using as little to no libraries as possible.
+
+Uses right-hand coordinate system, the rotations are clockwise.
 
 ## Libraries Used:
 - [SDL2](https://www.libsdl.org/) because I don't want to handle windows by myself. I use SDL2 just to open a window and draw pixels to it.
@@ -23,7 +25,6 @@ cd bin
 
 # TODO
 
-- Is something wrong with coordinate system? (rotations, translations)
 - Light misbehaves?
 - Figure out the math behind perspective projection matrix
 - Try to improve rendering performance
