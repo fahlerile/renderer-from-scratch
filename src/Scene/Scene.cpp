@@ -3,6 +3,8 @@
 #include "Window/Window.hpp"
 #include "Scene.hpp"
 
+#include <iostream>
+
 Scene::Scene(Window* window, Camera* camera)
 {
     this->window = window;

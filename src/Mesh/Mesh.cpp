@@ -80,8 +80,21 @@ void Mesh::render(Window* window, mat4& view_mat, mat4& projection_mat, vec4d& c
             for (int i = 0; i < 3; i++)
                 v[i] = this->vertex(face[i] - 1);
 
+            // points on the screen, screen space, normalized device coordinates
+            vec4d p[3];
+            for (int i = 0; i < 3; i++)
+            {
+                p[i] = (mvp * (vec4d) {v[i].x, v[i].y, v[i].z, 1});
+
+                // Perspective divide
+                for (int j = 0; j < 3; j++)
+                    p[i][j] = p[i][j] / p[i].w;
+            }
+
             // calculate normal vector for lighting
-            vec3d normal = (v[2]-v[0]).cross_product(v[1]-v[0]);
+            vec4d zero_to_one = p[1] - p[0];
+            vec4d zero_to_two = p[2] - p[0];
+            vec3d normal = ((vec3d) {zero_to_two.x, zero_to_two.y, zero_to_two.z}).cross_product({zero_to_one.x, zero_to_one.y, zero_to_one.z});
             normal = normal.normalize();
 
             // calculate if this triangle is visible by the camera
@@ -95,18 +108,6 @@ void Mesh::render(Window* window, mat4& view_mat, mat4& projection_mat, vec4d& c
             for (auto light : lights)
                 color = color + (light->get_color() * light->calculate_intensity(normal));
             color = color / lights.size();
-
-            // points on the screen, screen space, normalized device coordinates
-            // cast to needed type, discard z coordinate and scale coordinates
-            vec4fix24_8 p[3];
-            for (int i = 0; i < 3; i++)
-            {
-                p[i] = (vec4fix24_8) (mvp * (vec4d) {v[i].x, v[i].y, v[i].z, 1});
-
-                // Perspective divide
-                for (int j = 0; j < 3; j++)
-                    p[i][j] = p[i][j] / p[i].w;
-            }
 
             window->triangle({p[2], p[1], p[0]}, color);
         }

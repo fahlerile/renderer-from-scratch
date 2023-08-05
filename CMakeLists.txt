@@ -9,6 +9,7 @@ set(
   src/Scene/Scene.cpp
   src/Camera/Camera.cpp
   src/Light/Light.cpp
+  src/Light/DirectionalLight.cpp
   src/utils/Color/Color.cpp
 )
 

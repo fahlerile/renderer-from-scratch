@@ -7,8 +7,8 @@ class Light
 {
 public:
     Light(Color color);
-    float calculate_intensity(vec3d normal);
     Color get_color();
+    virtual float calculate_intensity(vec3d normal) = 0;
 
 protected:
     Color color;
