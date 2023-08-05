@@ -25,12 +25,9 @@ cd bin
 
 # TODO
 
-- `DirectionalLight` direction is wrong
-- `AmbientLight`?
-- Figure out the math behind perspective projection matrix
-- Try to improve rendering performance
-    - OpenCL?
-    - Try real-time rendering with moving camera
 - Add texture interpolation
+- `DirectionalLight` direction is wrong
+- Figure out the math behind perspective projection matrix
+
 - Add n-vertex polygon support in .obj files
 - Add material support (.mtl)
