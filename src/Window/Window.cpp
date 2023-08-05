@@ -2,7 +2,7 @@
 #include <SDL2/SDL.h>
 #include <fpm/fixed.hpp>
 #include <fpm/math.hpp>
-#include "Color/Color.hpp"
+#include "utils/Color/Color.hpp"
 #include "utils/vec/vec.hpp"
 #include "utils/constants.hpp"
 #include "Window.hpp"

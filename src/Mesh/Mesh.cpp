@@ -5,7 +5,7 @@
 #include <sstream>
 
 #include "Mesh.hpp"
-#include "Color/Color.hpp"
+#include "utils/Color/Color.hpp"
 #include "Window/Window.hpp"
 #include "utils/vec/vec.hpp"
 #include "utils/mat/mat.hpp"

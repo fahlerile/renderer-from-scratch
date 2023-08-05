@@ -24,8 +24,6 @@ cd bin
 # TODO
 
 - Figure out the math behind perspective projection matrix
-- Rename `Model` to `Mesh`
-- Move `Color` to `utils/`
 - Add function to add additional light sources, remove light from camera (Some kind of `Light` class?)
 - Try to improve rendering performance
     - CUDA?

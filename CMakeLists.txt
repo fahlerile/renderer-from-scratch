@@ -5,10 +5,10 @@ set(
   SOURCES
   src/main.cpp
   src/Window/Window.cpp
-  src/Color/Color.cpp
   src/Mesh/Mesh.cpp
   src/Renderer/Renderer.cpp
   src/Camera/Camera.cpp
+  src/utils/Color/Color.cpp
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")  # force .exe to build/bin
@@ -21,6 +21,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC src)
 add_library(sdl2 SHARED IMPORTED)
 set_property(TARGET sdl2 PROPERTY IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/lib/SDL2.dll")
 
+# find .dll.a
 find_library(
   SDL2_LIB
   SDL2.dll
@@ -34,4 +35,4 @@ target_link_libraries(
 )
 
 file(COPY res/ DESTINATION bin/res/)  # copy resources to bin
-file(COPY lib/SDL2.dll DESTINATION bin/)  # copy resources to bin
+file(COPY lib/SDL2.dll DESTINATION bin/)  # copy dynamic library to bin

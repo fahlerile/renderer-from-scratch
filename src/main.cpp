@@ -7,7 +7,7 @@
 #include "Camera/Camera.hpp"
 #include "Renderer/Renderer.hpp"
 #include "Mesh/Mesh.hpp"
-#include "Color/Color.hpp"
+#include "utils/Color/Color.hpp"
 #include "utils/to_radians.hpp"
 
 int main()
