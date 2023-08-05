@@ -62,7 +62,7 @@ void Mesh::add_position(vec3d position, vec3d rot_angles)
     this->model_matrices.push_back(transform);
 }
 
-void Mesh::render(Window* window, mat4& view_mat, mat4& projection_mat, vec4d& camera_front, std::vector<Light*>& lights)
+void Mesh::render(Window* window, mat4& view_mat, mat4& projection_mat, std::vector<Light*>& lights)
 {
     // For every model instance (for every model matrix)
     for (auto model_mat : this->model_matrices)
@@ -97,9 +97,11 @@ void Mesh::render(Window* window, mat4& view_mat, mat4& projection_mat, vec4d& c
             vec3d normal = ((vec3d) {zero_to_two.x, zero_to_two.y, zero_to_two.z}).cross_product({zero_to_one.x, zero_to_one.y, zero_to_one.z});
             normal = normal.normalize();
 
-            // calculate if this triangle is visible by the camera
-            // if not, skip it (backface culling)
-            float visible = normal.dot_product({camera_front.x, camera_front.y, camera_front.z});
+            // calculate if this triangle is visible by the
+            // camera. if not, skip it (backface culling)
+            // using this hard-coded vector because in screen
+            // space camera is always looking in +Z direction
+            float visible = normal.dot_product({0, 0, 1});
             if (visible < 0)
                 continue;
 

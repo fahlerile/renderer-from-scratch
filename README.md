@@ -24,7 +24,7 @@ cd bin
 # TODO
 
 - whats fucking wrong with coordinate system???
-- Camera back-face culling ignores view matrix (camera rotation)
+- Light misbehaves?
 - Figure out the math behind perspective projection matrix
 - Add function to add additional light sources, remove light from camera (Some kind of `Light` class?)
     - PROBLEM: find a way to store childen of one class in `std::vector`. currently everything is treated as base useless Light objects

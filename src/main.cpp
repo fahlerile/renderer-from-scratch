@@ -17,13 +17,13 @@ int main()
 
     // Initialize needed classes
     Window window({512, 512}, dimensions);
-    Camera camera({0, 0, -2}, {0, to_radians(0), 0}, to_radians(45),
+    Camera camera({2, 0, 0}, {0, to_radians(-90), 0}, to_radians(45),
                   dimensions.y / dimensions.x, 10, 0.1);
     Scene scene(&window, &camera);
 
     // load the mesh, position it in the world space
     Mesh mesh = Mesh("./res/models/african_head.obj");
-    mesh.add_position({0, 0, 0}, {0, to_radians(90), 0});
+    mesh.add_position({0, 0, 0}, {0, to_radians(180), 0});
 
     // create a light object
     DirectionalLight light({255, 255, 255}, (vec3d) {0, 0, 1}.normalize());

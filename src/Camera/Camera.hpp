@@ -12,7 +12,6 @@ public:
 
     mat4 get_view_mat();
     mat4 get_projection_mat();
-    vec4d get_front_vec();
 
 private:
     vec3d position;
@@ -21,8 +20,6 @@ private:
     double aspect_ratio;
     double zfar;
     double znear;
-
-    vec4d front;  // needed for backface culling
 
     mat4 view_mat;
     mat4 projection_mat;
