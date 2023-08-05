@@ -6,7 +6,7 @@
 #include "Window/Window.hpp"
 #include "Camera/Camera.hpp"
 #include "Renderer/Renderer.hpp"
-#include "Model/Model.hpp"
+#include "Mesh/Mesh.hpp"
 #include "Color/Color.hpp"
 #include "utils/to_radians.hpp"
 
@@ -20,11 +20,11 @@ int main()
                   dimensions.y / dimensions.x, 10, 0.1);
     Renderer renderer(&window, &camera);
 
-    // load the model
-    Model head = Model("./res/models/african_head.obj");
-    head.add_position({0, 0, 0}, {0, to_radians(0), 0});
+    // load the mesh, position it in the world space
+    Mesh mesh = Mesh("./res/models/african_head.obj");
+    mesh.add_position({0, 0, 0}, {0, to_radians(0), 0});
 
-    renderer.add_model(head);
+    renderer.add_mesh(mesh);
 
     window.clear({128, 204, 204});
     renderer.render();

@@ -24,9 +24,12 @@ cd bin
 # TODO
 
 - Figure out the math behind perspective projection matrix
+- Rename `Model` to `Mesh`
+- Move `Color` to `utils/`
 - Add function to add additional light sources, remove light from camera (Some kind of `Light` class?)
-- Add 4-vertex per a face .obj files
-- Try to improve `Window::triangle()` performance (6ms per frame with 2 color-interpolated triangles is very slow)
+- Try to improve rendering performance
+    - CUDA?
 - Real-time rendering with moving camera
+- Add n-vertex polygon support in .obj files
 - Add texture interpolation
 - Add material support (.mtl)

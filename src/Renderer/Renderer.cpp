@@ -1,4 +1,4 @@
-#include "Model/Model.hpp"
+#include "Mesh/Mesh.hpp"
 #include "Camera/Camera.hpp"
 #include "Window/Window.hpp"
 #include "Renderer.hpp"
@@ -9,9 +9,9 @@ Renderer::Renderer(Window* window, Camera* camera)
     this->camera = camera;
 }
 
-void Renderer::add_model(Model model)
+void Renderer::add_mesh(Mesh mesh)
 {
-    this->models.push_back(model);
+    this->meshes.push_back(mesh);
 }
 
 void Renderer::render()
@@ -20,8 +20,8 @@ void Renderer::render()
     mat4 projection_mat = this->camera->get_projection_mat();
     vec4d front_vec = this->camera->get_front_vec();
 
-    for (auto model : this->models)
+    for (auto mesh : this->meshes)
     {
-        model.render(window, view_mat, projection_mat, front_vec);
+        mesh.render(window, view_mat, projection_mat, front_vec);
     }
 }

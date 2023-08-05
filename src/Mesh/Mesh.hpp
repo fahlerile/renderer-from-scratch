@@ -5,10 +5,10 @@
 #include "utils/vec/vec.hpp"
 #include "utils/mat/mat.hpp"
 
-class Model
+class Mesh
 {
 public:
-    Model(std::string path);
+    Mesh(std::string path);
 
     void add_position(vec3d position, vec3d rot_angles);
     void render(Window* window, mat4& view_mat, mat4& projection_mat, vec4d& camera_front);

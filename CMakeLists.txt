@@ -6,7 +6,7 @@ set(
   src/main.cpp
   src/Window/Window.cpp
   src/Color/Color.cpp
-  src/Model/Model.cpp
+  src/Mesh/Mesh.cpp
   src/Renderer/Renderer.cpp
   src/Camera/Camera.cpp
 )

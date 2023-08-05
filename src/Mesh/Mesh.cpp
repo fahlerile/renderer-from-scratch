@@ -4,14 +4,14 @@
 #include <vector>
 #include <sstream>
 
-#include "Model.hpp"
+#include "Mesh.hpp"
 #include "Color/Color.hpp"
 #include "Window/Window.hpp"
 #include "utils/vec/vec.hpp"
 #include "utils/mat/mat.hpp"
 
 // Parse .obj file
-Model::Model(std::string path)
+Mesh::Mesh(std::string path)
 {
     std::ifstream file(path);
     if (file.is_open())
@@ -52,7 +52,7 @@ Model::Model(std::string path)
 }
 
 // `rot_angles` in radians
-void Model::add_position(vec3d position, vec3d rot_angles)
+void Mesh::add_position(vec3d position, vec3d rot_angles)
 {
     mat4 transform(1.0);
     transform = transform.rotate(rot_angles);
@@ -61,7 +61,7 @@ void Model::add_position(vec3d position, vec3d rot_angles)
     this->model_matrices.push_back(transform);
 }
 
-void Model::render(Window* window, mat4& view_mat, mat4& projection_mat, vec4d& camera_front)
+void Mesh::render(Window* window, mat4& view_mat, mat4& projection_mat, vec4d& camera_front)
 {
     // For every model instance (for every model matrix)
     for (auto model_mat : this->model_matrices)
@@ -109,17 +109,17 @@ void Model::render(Window* window, mat4& view_mat, mat4& projection_mat, vec4d& 
     }
 }
 
-vec3d Model::vertex(int index)
+vec3d Mesh::vertex(int index)
 {
     return this->vertices[index];
 }
 
-vec3i Model::face(int index)
+vec3i Mesh::face(int index)
 {
     return this->faces[index];
 }
 
-int Model::n_faces()
+int Mesh::n_faces()
 {
     return this->faces.size();
 }

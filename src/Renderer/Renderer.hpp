@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "Model/Model.hpp"
+#include "Mesh/Mesh.hpp"
 #include "Camera/Camera.hpp"
 #include "Window/Window.hpp"
 
@@ -9,11 +9,11 @@ class Renderer
 public:
     Renderer(Window* window, Camera* camera);
 
-    void add_model(Model model);
+    void add_mesh(Mesh mesh);
     void render();
 
 private:
     Window *window;
     Camera* camera;
-    std::vector<Model> models;
+    std::vector<Mesh> meshes;
 };
