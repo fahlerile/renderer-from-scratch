@@ -5,8 +5,9 @@
 
 #include "Window/Window.hpp"
 #include "Camera/Camera.hpp"
-#include "Renderer/Renderer.hpp"
+#include "Scene/Scene.hpp"
 #include "Mesh/Mesh.hpp"
+#include "Light/DirectionalLight.hpp"
 #include "utils/Color/Color.hpp"
 #include "utils/to_radians.hpp"
 
@@ -18,16 +19,21 @@ int main()
     Window window({512, 512}, dimensions);
     Camera camera({0, 0, 3}, {0, to_radians(180), 0}, to_radians(45),
                   dimensions.y / dimensions.x, 10, 0.1);
-    Renderer renderer(&window, &camera);
+    Scene scene(&window, &camera);
 
     // load the mesh, position it in the world space
     Mesh mesh = Mesh("./res/models/african_head.obj");
     mesh.add_position({0, 0, 0}, {0, to_radians(0), 0});
 
-    renderer.add_mesh(mesh);
+    // create a light object
+    DirectionalLight light({255, 255, 255}, {0, -1, 0});
+
+    // add mesh and light to scene
+    scene.add_mesh(&mesh);
+    scene.add_light(&light);
 
     window.clear({128, 204, 204});
-    renderer.render();
+    scene.render();
 
     std::cout << "Rendered!" << std::endl;
 

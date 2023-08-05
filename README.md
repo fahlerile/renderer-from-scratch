@@ -25,9 +25,10 @@ cd bin
 
 - Figure out the math behind perspective projection matrix
 - Add function to add additional light sources, remove light from camera (Some kind of `Light` class?)
+    - PROBLEM: find a way to store childen of one class in `std::vector`. currently everything is treated as base useless Light objects
 - Try to improve rendering performance
-    - CUDA?
-- Real-time rendering with moving camera
-- Add n-vertex polygon support in .obj files
+    - OpenCL?
+    - Real-time rendering with moving camera
 - Add texture interpolation
+- Add n-vertex polygon support in .obj files
 - Add material support (.mtl)

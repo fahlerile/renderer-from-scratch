@@ -6,8 +6,9 @@ set(
   src/main.cpp
   src/Window/Window.cpp
   src/Mesh/Mesh.cpp
-  src/Renderer/Renderer.cpp
+  src/Scene/Scene.cpp
   src/Camera/Camera.cpp
+  src/Light/Light.cpp
   src/utils/Color/Color.cpp
 )
 

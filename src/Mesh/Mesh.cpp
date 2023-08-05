@@ -5,8 +5,9 @@
 #include <sstream>
 
 #include "Mesh.hpp"
-#include "utils/Color/Color.hpp"
 #include "Window/Window.hpp"
+#include "Light/Light.hpp"
+#include "utils/Color/Color.hpp"
 #include "utils/vec/vec.hpp"
 #include "utils/mat/mat.hpp"
 
@@ -61,7 +62,7 @@ void Mesh::add_position(vec3d position, vec3d rot_angles)
     this->model_matrices.push_back(transform);
 }
 
-void Mesh::render(Window* window, mat4& view_mat, mat4& projection_mat, vec4d& camera_front)
+void Mesh::render(Window* window, mat4& view_mat, mat4& projection_mat, vec4d& camera_front, std::vector<Light*>& lights)
 {
     // For every model instance (for every model matrix)
     for (auto model_mat : this->model_matrices)
@@ -83,6 +84,18 @@ void Mesh::render(Window* window, mat4& view_mat, mat4& projection_mat, vec4d& c
             vec3d normal = (v[2]-v[0]).cross_product(v[1]-v[0]);
             normal = normal.normalize();
 
+            // calculate if this triangle is visible by the camera
+            // if not, skip it (backface culling)
+            float visible = normal.dot_product({camera_front.x, camera_front.y, camera_front.z});
+            if (visible < 0)
+                continue;
+
+            // calculate light intensities, get average color
+            Color color = {0, 0, 0};
+            for (auto light : lights)
+                color = color + (light->get_color() * light->calculate_intensity(normal));
+            color = color / lights.size();
+
             // points on the screen, screen space, normalized device coordinates
             // cast to needed type, discard z coordinate and scale coordinates
             vec4fix24_8 p[3];
@@ -95,16 +108,7 @@ void Mesh::render(Window* window, mat4& view_mat, mat4& projection_mat, vec4d& c
                     p[i][j] = p[i][j] / p[i].w;
             }
 
-            // calculate light intensity
-            Color light_color = {255, 255, 255};
-            float visible = normal.dot_product({camera_front.x, camera_front.y, camera_front.z});
-
-            // backface culling (rendering only faces with light)
-            if (visible > 0)
-            {
-                Color color = light_color * visible;
-                window->triangle({p[2], p[1], p[0]}, color);
-            }
+            window->triangle({p[2], p[1], p[0]}, color);
         }
     }
 }
