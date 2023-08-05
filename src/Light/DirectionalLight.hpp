@@ -8,7 +8,7 @@ class DirectionalLight : public Light
 {
 public:
     DirectionalLight(Color color, vec3d direction);
-    float calculate_intensity(vec3d normal);
+    float calculate_intensity(vec3d normal, mat4& view_mat);
     vec3d get_direction();
 
 private:

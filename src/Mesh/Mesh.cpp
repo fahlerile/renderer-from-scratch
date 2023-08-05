@@ -108,7 +108,7 @@ void Mesh::render(Window* window, mat4& view_mat, mat4& projection_mat, std::vec
             // calculate light intensities, get average color
             Color color = {0, 0, 0};
             for (auto light : lights)
-                color = color + (light->get_color() * light->calculate_intensity(normal));
+                color = color + (light->get_color() * light->calculate_intensity(normal, view_mat));
             color = color / lights.size();
 
             window->triangle({p[2], p[1], p[0]}, color);

@@ -25,7 +25,8 @@ cd bin
 
 # TODO
 
-- Light misbehaves?
+- `DirectionalLight` direction is wrong
+- `AmbientLight`?
 - Figure out the math behind perspective projection matrix
 - Try to improve rendering performance
     - OpenCL?
