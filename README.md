@@ -25,9 +25,18 @@ cd bin
 
 # TODO
 
-- Add texture interpolation
-- `DirectionalLight` direction is wrong
 - Figure out the math behind perspective projection matrix
+- Add texture interpolation
+    - Update .obj parser to parse `vt` lines
+    - Interpolate `u v` coordinates inside the triangle
+    - Color the pixels in rasterization stage according to this texture
+- Gouraud shading
+    - Update .obj parser to parse `vn` lines
+    - Transform these normal vectors along with vertices
+    - Calculate color not to triangles, but to vertices and interpolate between these colors in each triangle
+    - If there is no `vn` lines, calculate vertex normals to keep program running
+- Shaders
+- Lightning
 
-- Add n-vertex polygon support in .obj files
-- Add material support (.mtl)
+- Triangulate n-vertex polygons in .obj files
+- Materials? (.mtl)

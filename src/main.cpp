@@ -12,11 +12,11 @@
 
 int main()
 {
-    const vec2i dimensions = {512, 512};
+    const vec2i dimensions = {1024, 1024};
 
     // Initialize needed classes
-    Window window({512, 512}, dimensions);
-    Camera camera({0, 0, -2}, {0, to_radians(0), 0}, to_radians(45),
+    Window window({1024, 1024}, dimensions);
+    Camera camera({0, 0, -1}, {0, to_radians(0), 0}, to_radians(60),
                   dimensions.y / dimensions.x, 10, 0.1);
     Scene scene(&window, &camera);
 
@@ -27,7 +27,7 @@ int main()
     // add mesh to scene
     scene.add_mesh(&mesh);
 
-    window.clear({128, 204, 204});
+    window.clear({0, 0, 0});
     scene.render();
 
     std::cout << "Rendered!" << std::endl;
