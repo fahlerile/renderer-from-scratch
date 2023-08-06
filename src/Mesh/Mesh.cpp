@@ -6,7 +6,6 @@
 
 #include "Mesh.hpp"
 #include "Window/Window.hpp"
-#include "Light/Light.hpp"
 #include "utils/Color/Color.hpp"
 #include "utils/vec/vec.hpp"
 #include "utils/mat/mat.hpp"
@@ -62,7 +61,7 @@ void Mesh::add_position(vec3d position, vec3d rot_angles)
     this->model_matrices.push_back(transform);
 }
 
-void Mesh::render(Window* window, mat4& view_mat, mat4& projection_mat, std::vector<Light*>& lights)
+void Mesh::render(Window* window, mat4& view_mat, mat4& projection_mat)
 {
     // For every model instance (for every model matrix)
     for (auto model_mat : this->model_matrices)
@@ -92,10 +91,10 @@ void Mesh::render(Window* window, mat4& view_mat, mat4& projection_mat, std::vec
             }
 
             // calculate normal vector for lighting
-            vec4d zero_to_one = p[1] - p[0];
-            vec4d zero_to_two = p[2] - p[0];
-            vec3d normal = ((vec3d) {zero_to_two.x, zero_to_two.y, zero_to_two.z}).cross_product({zero_to_one.x, zero_to_one.y, zero_to_one.z});
-            normal = normal.normalize();
+            // discarding w value of screen space vertices
+            vec3d edge01 = (vec3d) {p[1].x, p[1].y, p[1].z} - (vec3d) {p[0].x, p[0].y, p[0].z};
+            vec3d edge02 = (vec3d) {p[2].x, p[2].y, p[2].z} - (vec3d) {p[0].x, p[0].y, p[0].z};
+            vec3d normal = edge02.cross_product(edge01).normalize();
 
             // calculate if this triangle is visible by the
             // camera. if not, skip it (backface culling)
@@ -105,11 +104,13 @@ void Mesh::render(Window* window, mat4& view_mat, mat4& projection_mat, std::vec
             if (visible < 0)
                 continue;
 
-            // calculate light intensities, get average color
-            Color color = {0, 0, 0};
-            for (auto light : lights)
-                color = color + (light->get_color() * light->calculate_intensity(normal, view_mat));
-            color = color / lights.size();
+            // calculate light intensity, get color for this triangle
+            // using this hard-coded light direction vector because I
+            // want the camera to light up everything
+            Color color = {220, 220, 220};
+            vec3d light_direction = {0, 0, 1};
+            double intensity = normal.dot_product(light_direction);
+            color = color * intensity;
 
             window->triangle({p[2], p[1], p[0]}, color);
         }

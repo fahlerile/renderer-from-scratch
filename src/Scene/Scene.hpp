@@ -1,7 +1,6 @@
 #pragma once
 #include <vector>
 #include "Mesh/Mesh.hpp"
-#include "Light/Light.hpp"
 #include "Camera/Camera.hpp"
 #include "Window/Window.hpp"
 
@@ -11,7 +10,6 @@ public:
     Scene(Window* window, Camera* camera);
 
     void add_mesh(Mesh* mesh);
-    void add_light(Light* light);
     void render();
 
 private:
@@ -19,5 +17,4 @@ private:
     Camera* camera;
 
     std::vector<Mesh*> meshes;
-    std::vector<Light*> lights;
 };

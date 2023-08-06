@@ -3,8 +3,6 @@
 #include "Window/Window.hpp"
 #include "Scene.hpp"
 
-#include <iostream>
-
 Scene::Scene(Window* window, Camera* camera)
 {
     this->window = window;
@@ -16,11 +14,6 @@ void Scene::add_mesh(Mesh* mesh)
     this->meshes.push_back(mesh);
 }
 
-void Scene::add_light(Light* light)
-{
-    this->lights.push_back(light);
-}
-
 void Scene::render()
 {
     mat4 view_mat = this->camera->get_view_mat();
@@ -28,6 +21,6 @@ void Scene::render()
 
     for (auto mesh : this->meshes)
     {
-        mesh->render(window, view_mat, projection_mat, this->lights);
+        mesh->render(window, view_mat, projection_mat);
     }
 }

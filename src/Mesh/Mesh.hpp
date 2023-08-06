@@ -2,7 +2,6 @@
 #include <string>
 #include <vector>
 #include "Window/Window.hpp"
-#include "Light/Light.hpp"
 #include "utils/vec/vec.hpp"
 #include "utils/mat/mat.hpp"
 
@@ -12,7 +11,7 @@ public:
     Mesh(std::string path);
 
     void add_position(vec3d position, vec3d rot_angles);
-    void render(Window* window, mat4& view_mat, mat4& projection_mat, std::vector<Light*> &lights);
+    void render(Window* window, mat4& view_mat, mat4& projection_mat);
 
     vec3i face(int index);
     vec3d vertex(int index);
