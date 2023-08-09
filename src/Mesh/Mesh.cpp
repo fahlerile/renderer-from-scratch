@@ -45,6 +45,20 @@ Mesh::Mesh(std::string path)
 
                 this->faces.push_back({indices[0], indices[1], indices[2]});
             }
+
+            // if texture coordinate
+            else if (line.substr(0, 3).compare("vt ") == 0)
+            {
+                std::vector<double> coords;
+                // !!! 4 BECAUSE THERE IS TWO SPACES IN HEAD'S .OBJ FILE !!!
+                std::istringstream iss(line.substr(4));
+                std::string s_coord;
+
+                while (std::getline(iss, s_coord, ' '))
+                    coords.push_back(std::stod(s_coord));
+
+                this->texture_coordinates.push_back({coords[0], coords[1], coords[2]});
+            }
         }
     }
     else
@@ -71,21 +85,19 @@ void Mesh::render(Window* window, mat4& view_mat, mat4& projection_mat)
         // For every face in this model
         for (int i = 0; i < this->n_faces(); i++)
         {
-            vec3i face = this->face(i);
+            vec3i face = this->faces[i];
 
-            // Vertices, world space
-            // -1 because .obj is 1-indexed
-            vec3d v[3];
-            for (int i = 0; i < 3; i++)
-                v[i] = this->vertex(face[i] - 1);
-
-            // points on the screen, screen space, normalized device coordinates
-            vec4d p[3];
+            vec3d v[3];  // vertices, world space
+            vec3d vt[3];  // vertex texture coordinates
+            vec4d p[3];  // points in screen space, normalized device coordinates
             for (int i = 0; i < 3; i++)
             {
-                p[i] = (mvp * (vec4d) {v[i].x, v[i].y, v[i].z, 1});
+                // -1 because .obj is 1-indexed
+                v[i] = this->vertices[face[i] - 1];
+                vt[i] = this->texture_coordinates[face[i] - 1];
 
-                // Perspective divide
+                p[i] = (mvp * (vec4d) {v[i].x, v[i].y, v[i].z, 1});
+                // perspective divide
                 for (int j = 0; j < 3; j++)
                     p[i][j] = p[i][j] / p[i].w;
             }
@@ -112,7 +124,11 @@ void Mesh::render(Window* window, mat4& view_mat, mat4& projection_mat)
             double intensity = normal.dot_product(light_direction);
             color = color * intensity;
 
-            window->triangle({p[2], p[1], p[0]}, color);
+            window->triangle(
+                {p[2], p[1], p[0]},
+                {color, color, color},
+                {vt[2], vt[1], vt[0]}
+            );
         }
     }
 }

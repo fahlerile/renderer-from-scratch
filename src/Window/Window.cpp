@@ -169,7 +169,8 @@ void Window::line(std::vector<vec4d> p_ndc, Color c)
 // Vertices are assumed to be in counter-clockwise direction
 // Uses top-left rasterization rule
 // https://www.youtube.com/watch?v=k5wtuKWmV48
-void Window::triangle(std::vector<vec4d> v_dnc, std::vector<Color> c)
+void Window::triangle(std::vector<vec4d> v_dnc, std::vector<Color> c,
+                      std::vector<vec3d> uvw, Texture& texture)
 {
     const int decimal_bits = 8;  // because using fixed_24_8, so 8 bits of decimal precision
     // smallest possible value that can be represented with fixed_24_8 (need it to determine bias)
@@ -300,7 +301,16 @@ void Window::triangle(std::vector<vec4d> v_dnc, std::vector<Color> c)
                 else  // can't actually draw pixels outside of the screen :(
                     continue;
 
-                Color color = (c[0] * alpha) + (c[1] * beta) + (c[2] * gamma);
+                // uvw texture coordinates for this pixel
+                vec3d pixel_uvw = {
+                    (uvw[0].x * alpha) + (uvw[1].x * beta) + (uvw[2].z * gamma),
+                    (uvw[0].y * alpha) + (uvw[1].y * beta) + (uvw[2].y * gamma),
+                    (uvw[0].z * alpha) + (uvw[1].z * beta) + (uvw[2].z * gamma)
+                };
+
+                Color color = texture.get_color_from_uvw(pixel_uvw);
+
+                // Color color = (c[0] * alpha) + (c[1] * beta) + (c[2] * gamma);
                 this->draw_pixel({x, y}, color);
             }
 
@@ -315,11 +325,6 @@ void Window::triangle(std::vector<vec4d> v_dnc, std::vector<Color> c)
         w_initial[1] += dw[1].y;
         w_initial[2] += dw[2].y;
     }
-}
-
-void Window::triangle(std::vector<vec4d> v, Color c)
-{
-    this->triangle({v[0], v[1], v[2]}, {c, c, c});
 }
 
 // Device Normalized Coordinates to pixels

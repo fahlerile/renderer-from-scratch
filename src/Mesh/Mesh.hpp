@@ -20,6 +20,7 @@ public:
 private:
     std::vector<vec3d> vertices;
     std::vector<vec3i> faces;
+    std::vector<vec3d> texture_coordinates;
 
     std::vector<mat4> model_matrices;
 };

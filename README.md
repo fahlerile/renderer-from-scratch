@@ -25,11 +25,12 @@ cd bin
 
 # TODO
 
-- Figure out the math behind perspective projection matrix
 - Add texture interpolation
-    - Update .obj parser to parse `vt` lines
-    - Interpolate `u v` coordinates inside the triangle
+    - [x] Update .obj parser to parse `vt` lines
+    - [x] Interpolate `u v` coordinates inside the triangle
+    - Add `Texture` class and pass it to triangle function
     - Color the pixels in rasterization stage according to this texture
+    - Add triangle function without textures (just colors)
 - Gouraud shading
     - Update .obj parser to parse `vn` lines
     - Transform these normal vectors along with vertices
