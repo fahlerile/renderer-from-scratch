@@ -124,11 +124,12 @@ void Mesh::render(Window* window, mat4& view_mat, mat4& projection_mat)
             double intensity = normal.dot_product(light_direction);
             color = color * intensity;
 
-            window->triangle(
-                {p[2], p[1], p[0]},
-                {color, color, color},
-                {vt[2], vt[1], vt[0]}
-            );
+            // window->triangle(
+            //     {p[2], p[1], p[0]},
+            //     {color, color, color},
+            //     {vt[2], vt[1], vt[0]},
+            //     // add texture
+            // );
         }
     }
 }

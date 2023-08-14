@@ -31,6 +31,7 @@ cd bin
     - Add `Texture` class and pass it to triangle function
     - Color the pixels in rasterization stage according to this texture
     - Add triangle function without textures (just colors)
+- Fix color interpolation in `Window::line()`
 - Gouraud shading
     - Update .obj parser to parse `vn` lines
     - Transform these normal vectors along with vertices

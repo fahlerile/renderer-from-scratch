@@ -7,6 +7,7 @@
 #include "Camera/Camera.hpp"
 #include "Scene/Scene.hpp"
 #include "Mesh/Mesh.hpp"
+#include "Texture/Texture.hpp"
 #include "utils/Color/Color.hpp"
 #include "utils/to_radians.hpp"
 
@@ -20,15 +21,33 @@ int main()
                   dimensions.y / dimensions.x, 10, 0.1);
     Scene scene(&window, &camera);
 
-    // load the mesh, position it in the world space
-    Mesh mesh = Mesh("./res/models/african_head.obj");
-    mesh.add_position({0, 0, 0}, {0, to_radians(180), 0});
+    // // load the mesh, position it in the world space
+    // Mesh mesh = Mesh("./res/models/african_head.obj");
+    // mesh.add_position({0, 0, 0}, {0, to_radians(180), 0});
 
-    // add mesh to scene
-    scene.add_mesh(&mesh);
+    // // add mesh to scene
+    // scene.add_mesh(&mesh);
 
     window.clear({0, 0, 0});
-    scene.render();
+    // scene.render();
+
+    std::vector<vec4d> vertices = {
+        {0, 0.5},
+        {-0.5, -0.5},
+        {0.5, -0.5}
+    };
+    std::vector<Color> colors = {
+        {255, 255, 255},
+        {255, 255, 255},
+        {255, 255, 255}
+    };
+    std::vector<vec2d> uv = {
+        {0.5, 1},
+        {0, 0},
+        {1, 0}
+    };
+    Texture texture("./res/textures/test_texture.ppm");
+    window.triangle(vertices, colors, uv, texture);
 
     std::cout << "Rendered!" << std::endl;
 

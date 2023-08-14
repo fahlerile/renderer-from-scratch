@@ -2,36 +2,36 @@
 
 Color Color::operator*(double scalar)
 {
-    return {(short) ((double) this->red   * scalar),
-            (short) ((double) this->green * scalar),
-            (short) ((double) this->blue  * scalar)};
+    return {(unsigned char) ((double) this->red   * scalar),
+            (unsigned char) ((double) this->green * scalar),
+            (unsigned char) ((double) this->blue  * scalar)};
 }
 
 Color Color::operator/(double scalar)
 {
-    return {(short) ((double) this->red   / scalar),
-            (short) ((double) this->green / scalar),
-            (short) ((double) this->blue  / scalar)};
+    return {(unsigned char) ((double) this->red   / scalar),
+            (unsigned char) ((double) this->green / scalar),
+            (unsigned char) ((double) this->blue  / scalar)};
 }
 
 Color Color::operator+(Color other)
 {
-    return {(short) (this->red   + other.red),
-            (short) (this->green + other.green),
-            (short) (this->blue  + other.blue)};
+    return {(unsigned char) (this->red   + other.red),
+            (unsigned char) (this->green + other.green),
+            (unsigned char) (this->blue  + other.blue)};
 }
 
 Color Color::operator+=(Color other)
 {
-    *this = {(short) (this->red   + other.red),
-             (short) (this->green + other.green),
-             (short) (this->blue  + other.blue)};
+    *this = {(unsigned char) (this->red   + other.red),
+             (unsigned char) (this->green + other.green),
+             (unsigned char) (this->blue  + other.blue)};
     return *this;
 }
 
 Color Color::operator-(Color other)
 {
-    return {(short) (this->red   - other.red),
-            (short) (this->green - other.green),
-            (short) (this->blue  - other.blue)};
+    return {(unsigned char) (this->red   - other.red),
+            (unsigned char) (this->green - other.green),
+            (unsigned char) (this->blue  - other.blue)};
 }

@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 #include <fpm/fixed.hpp>
 #include <fpm/math.hpp>
+#include "Texture/Texture.hpp"
 #include "utils/Color/Color.hpp"
 #include "utils/vec/vec.hpp"
 #include "utils/constants.hpp"
@@ -170,7 +171,7 @@ void Window::line(std::vector<vec4d> p_ndc, Color c)
 // Uses top-left rasterization rule
 // https://www.youtube.com/watch?v=k5wtuKWmV48
 void Window::triangle(std::vector<vec4d> v_dnc, std::vector<Color> c,
-                      std::vector<vec3d> uvw, Texture& texture)
+                      std::vector<vec2d> uv, Texture& texture)
 {
     const int decimal_bits = 8;  // because using fixed_24_8, so 8 bits of decimal precision
     // smallest possible value that can be represented with fixed_24_8 (need it to determine bias)
@@ -302,13 +303,12 @@ void Window::triangle(std::vector<vec4d> v_dnc, std::vector<Color> c,
                     continue;
 
                 // uvw texture coordinates for this pixel
-                vec3d pixel_uvw = {
-                    (uvw[0].x * alpha) + (uvw[1].x * beta) + (uvw[2].z * gamma),
-                    (uvw[0].y * alpha) + (uvw[1].y * beta) + (uvw[2].y * gamma),
-                    (uvw[0].z * alpha) + (uvw[1].z * beta) + (uvw[2].z * gamma)
+                vec2d pixel_uv = {
+                    (uv[0].x * alpha) + (uv[1].x * beta) + (uv[2].x * gamma),
+                    (uv[0].y * alpha) + (uv[1].y * beta) + (uv[2].y * gamma)
                 };
 
-                Color color = texture.get_color_from_uvw(pixel_uvw);
+                Color color = texture.get_color_from_uv(pixel_uv);
 
                 // Color color = (c[0] * alpha) + (c[1] * beta) + (c[2] * gamma);
                 this->draw_pixel({x, y}, color);

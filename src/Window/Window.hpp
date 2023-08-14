@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL2/SDL.h>
+#include "Texture/Texture.hpp"
 #include "utils/Color/Color.hpp"
 #include "utils/vec/vec.hpp"
 
@@ -17,7 +18,7 @@ public:
     void line(std::vector<vec4d> p_ndc, std::vector<Color> c);
     void line(std::vector<vec4d> p_ndc, Color c);
     void triangle(std::vector<vec4d> v_dnc, std::vector<Color> c,
-                  std::vector<vec3d> uvw, Texture& texture);
+                  std::vector<vec2d> uv, Texture& texture);
 
     bool is_running();
 
