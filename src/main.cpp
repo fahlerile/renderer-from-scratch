@@ -32,16 +32,10 @@ int main()
     // scene.render();
 
     std::vector<vec4d> vertices = {
-        {-0.5, 0.5},
+        {-0.5,  0.5},
         {-0.5, -0.5},
-        {0.5, -0.5},
-        {0.5, 0.5}
-    };
-    std::vector<Color> colors = {
-        {255, 255, 255},
-        {255, 255, 255},
-        {255, 255, 255},
-        {255, 255, 255}
+        { 0.5, -0.5},
+        { 0.5,  0.5}
     };
     std::vector<vec2d> uv = {
         {0, 1},
@@ -50,17 +44,18 @@ int main()
         {1, 1}
     };
     Texture texture("./res/textures/half_life_box.ppm");
-    window.triangle(
+    window.textured_triangle(
         {vertices[0], vertices[1], vertices[2]},
-        {colors[0], colors[1], colors[2]},
         {uv[0], uv[1], uv[2]},
         texture
     );
-    window.triangle(
+    window.colored_triangle(
         {vertices[3], vertices[0], vertices[2]},
-        {colors[3], colors[0], colors[2]},
-        {uv[3], uv[0], uv[2]},
-        texture
+        {
+            {255, 0, 0},
+            {0, 255, 0},
+            {0, 0, 255}
+        }
     );
 
     std::cout << "Rendered!" << std::endl;

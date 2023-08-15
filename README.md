@@ -31,7 +31,7 @@ cd bin
     - [x] Add `Texture` class and pass it to triangle function
     - [x] Color the pixels in rasterization stage according to this texture
     - [x] Fix image artifacts in `test_texture.ppm` box (bug in PPM loader?)
-    - Create two separate functions for colored triangle and for textured triangle
+    - [x] Create two separate functions for colored triangle and for textured triangle
     - Render a head with textures!
 - Fix color interpolation in `Window::line()`
 - Gouraud shading

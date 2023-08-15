@@ -15,10 +15,12 @@ public:
     void swap_buffers();
 
     void draw_pixel(vec2i position, Color color);
+
     void line(std::vector<vec4d> p_ndc, std::vector<Color> c);
     void line(std::vector<vec4d> p_ndc, Color c);
-    void triangle(std::vector<vec4d> v_dnc, std::vector<Color> c,
-                  std::vector<vec2d> uv, Texture& texture);
+
+    void colored_triangle(std::vector<vec4d> v_dnc, std::vector<Color> c);
+    void textured_triangle(std::vector<vec4d> v_dnc, std::vector<vec2d> uv, Texture& texture);
 
     bool is_running();
 
