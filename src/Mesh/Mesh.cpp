@@ -38,14 +38,36 @@ Mesh::Mesh(std::string path, Texture *texture)
             // if face
             else if (line.substr(0, 2).compare("f ") == 0)
             {
-                std::vector<int> indices;
+                std::vector<size_t> vertex_indices;
+                std::vector<size_t> texture_coordinate_indices;
+
                 std::istringstream iss(line.substr(2));
                 std::string s_triple;
+                std::string s_index;
 
+                // get every triple
                 while (std::getline(iss, s_triple, ' '))
-                    indices.push_back(std::stoi(s_triple.substr(0, s_triple.find('/'))));
+                {
+                    int i = 0;
+                    std::istringstream iss_triple(s_triple);
+                    // get every index in triple
+                    while (std::getline(iss_triple, s_index, '/'))
+                    {
+                        // -1 because .obj is 1-indexed and c++ is 0-indexed
+                        switch (i)
+                        {
+                        case 0:
+                            vertex_indices.push_back(std::stoi(s_index) - 1);
+                            break;
+                        case 1:
+                            texture_coordinate_indices.push_back(std::stoi(s_index) - 1);
+                            break;
+                        }
+                        i++;
+                    }
+                }
 
-                this->faces.push_back({indices[0], indices[1], indices[2]});
+                this->faces.push_back((face_t) {vertex_indices, texture_coordinate_indices});
             }
 
             // if texture coordinate
@@ -85,7 +107,7 @@ void Mesh::render(Window* window, mat4& view_mat, mat4& projection_mat)
         mat4 mvp = projection_mat * view_mat * model_mat;
 
         // for every face in this model
-        for (int i = 0; i < this->n_faces(); i++)
+        for (int i = 0, n = this->faces.size(); i < n; i++)
         {
             // get the face
             // vec3i face = this->faces[i];
@@ -101,8 +123,8 @@ void Mesh::render(Window* window, mat4& view_mat, mat4& projection_mat)
                 // -1 because .obj is 1-indexed
                 // v[i] = this->vertices[face[i] - 1];
                 // vt[i] = this->texture_coordinates[face[i] - 1];
-                v[i] = this->vertices[face.vertices_indices[i]];
-                vt[i] = this->texture_coordinates[face.texture_coordinates_indices[i]];
+                v[i] = this->vertices[face.vertex_indices[i]];
+                vt[i] = this->texture_coordinates[face.texture_coordinate_indices[i]];
 
                 p[i] = (mvp * (vec4d) {v[i].x, v[i].y, v[i].z, 1});
                 // perspective divide
@@ -124,13 +146,13 @@ void Mesh::render(Window* window, mat4& view_mat, mat4& projection_mat)
             if (visible < 0)
                 continue;
 
-            // calculate light intensity, get color for this triangle
-            // using this hard-coded light direction vector because I
-            // want the camera to light up everything
-            Color color = {220, 220, 220};
-            vec3d light_direction = {0, 0, 1};
-            double intensity = normal.dot_product(light_direction);
-            color = color * intensity;
+            // // calculate light intensity, get color for this triangle
+            // // using this hard-coded light direction vector because I
+            // // want the camera to light up everything
+            // Color color = {220, 220, 220};
+            // vec3d light_direction = {0, 0, 1};
+            // double intensity = normal.dot_product(light_direction);
+            // color = color * intensity;
 
             // std::cout << v[0][0] << " " << v[0][1] << " " << v[0][2] << "\n"
             //           << v[1][0] << " " << v[1][1] << " " << v[1][2] << "\n"
@@ -149,19 +171,4 @@ void Mesh::render(Window* window, mat4& view_mat, mat4& projection_mat)
             // return;
         }
     }
-}
-
-vec3d Mesh::vertex(int index)
-{
-    return this->vertices[index];
-}
-
-vec3i Mesh::face(int index)
-{
-    return this->faces[index];
-}
-
-int Mesh::n_faces()
-{
-    return this->faces.size();
 }
