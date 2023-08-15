@@ -308,9 +308,8 @@ void Window::triangle(std::vector<vec4d> v_dnc, std::vector<Color> c,
                     (uv[0].y * alpha) + (uv[1].y * beta) + (uv[2].y * gamma)
                 };
 
-                Color color = texture.get_color_from_uv(pixel_uv);
-
                 // Color color = (c[0] * alpha) + (c[1] * beta) + (c[2] * gamma);
+                Color color = texture.get_color_from_uv(pixel_uv);
                 this->draw_pixel({x, y}, color);
             }
 

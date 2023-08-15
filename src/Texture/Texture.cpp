@@ -3,6 +3,8 @@
 #include "utils/Color/Color.hpp"
 #include "Texture.hpp"
 
+#include <iostream>
+
 // Supports only PPM images
 // https://ru.wikipedia.org/wiki/Portable_anymap for format reference
 Texture::Texture(std::string path)
@@ -33,8 +35,11 @@ Texture::Texture(std::string path)
     std::getline(file, line);  // get line with 255
     assert(std::stoi(line) == 255);
 
-    std::getline(file, line);  // get line with image data
-    std::vector<Color> temp;
+    // get the image data (until EOF)
+    line.clear();
+    std::copy(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>(), std::back_inserter(line));
+
+    std::vector<Color> image_row;
     for (int i = 0, n = line.length() - 2; i < n; i += 3)  // i - pixel index
     {
         Color color = {
@@ -43,12 +48,11 @@ Texture::Texture(std::string path)
             (unsigned char) line[i+2]
         };
 
-        temp.push_back(color);
+        image_row.push_back(color);
         if (i % width == 0)
         {
-            std::vector<Color> image_row = temp;
             this->data.push_back(image_row);
-            temp.clear();
+            image_row.clear();
         }
     }
 
@@ -61,11 +65,8 @@ Color Texture::get_color_from_uv(vec2d uv)
     // v = y
     // https://learnopengl.com/img/getting-started/tex_coords.png
 
-    int x_coord = std::round(this->width * uv.x);
-    int y_coord = this->height - std::round(this->height * uv.y);
-
-    // x_coord = (x_coord >= width) ? width - 1 : x_coord;
-    // y_coord = (y_coord >= height) ? height - 1 : y_coord;
+    int x_coord = std::round((this->width - 1) * uv.x);                        // [0, width)
+    int y_coord = (this->height - 1) - std::round((this->height - 1) * uv.y);  // [0, height)
 
     return this->data[y_coord][x_coord];
 }

@@ -32,22 +32,36 @@ int main()
     // scene.render();
 
     std::vector<vec4d> vertices = {
-        {0, 0.5},
+        {-0.5, 0.5},
         {-0.5, -0.5},
-        {0.5, -0.5}
+        {0.5, -0.5},
+        {0.5, 0.5}
     };
     std::vector<Color> colors = {
+        {255, 255, 255},
         {255, 255, 255},
         {255, 255, 255},
         {255, 255, 255}
     };
     std::vector<vec2d> uv = {
-        {0.5, 1},
+        {0, 1},
         {0, 0},
-        {1, 0}
+        {1, 0},
+        {1, 1}
     };
     Texture texture("./res/textures/test_texture.ppm");
-    window.triangle(vertices, colors, uv, texture);
+    window.triangle(
+        {vertices[0], vertices[1], vertices[2]},
+        {colors[0], colors[1], colors[2]},
+        {uv[0], uv[1], uv[2]},
+        texture
+    );
+    window.triangle(
+        {vertices[3], vertices[0], vertices[2]},
+        {colors[3], colors[0], colors[2]},
+        {uv[3], uv[0], uv[2]},
+        texture
+    );
 
     std::cout << "Rendered!" << std::endl;
 
