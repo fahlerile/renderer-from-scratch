@@ -322,7 +322,7 @@ void Window::colored_triangle(std::vector<vec4d> v_dnc, std::vector<Color> c)
 // Vertices are assumed to be in counter-clockwise direction
 // Uses top-left rasterization rule
 // https://www.youtube.com/watch?v=k5wtuKWmV48
-void Window::textured_triangle(std::vector<vec4d> v_dnc, std::vector<vec2d> uv, Texture& texture)
+void Window::textured_triangle(std::vector<vec4d> v_dnc, std::vector<vec2d> uv, Texture *texture)
 {
     const int decimal_bits = 8;  // because using fixed_24_8, so 8 bits of decimal precision
     // smallest possible value that can be represented with fixed_24_8 (need it to determine bias)
@@ -459,7 +459,7 @@ void Window::textured_triangle(std::vector<vec4d> v_dnc, std::vector<vec2d> uv, 
                     (uv[0].y * alpha) + (uv[1].y * beta) + (uv[2].y * gamma)
                 };
 
-                Color color = texture.get_color_from_uv(pixel_uv);
+                Color color = texture->get_color_from_uv(pixel_uv);
                 this->draw_pixel({x, y}, color);
             }
 

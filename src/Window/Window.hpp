@@ -20,7 +20,7 @@ public:
     void line(std::vector<vec4d> p_ndc, Color c);
 
     void colored_triangle(std::vector<vec4d> v_dnc, std::vector<Color> c);
-    void textured_triangle(std::vector<vec4d> v_dnc, std::vector<vec2d> uv, Texture& texture);
+    void textured_triangle(std::vector<vec4d> v_dnc, std::vector<vec2d> uv, Texture *texture);
 
     bool is_running();
 

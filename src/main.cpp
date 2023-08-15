@@ -13,50 +13,23 @@
 
 int main()
 {
-    const vec2i dimensions = {1024, 1024};
-
     // Initialize needed classes
-    Window window({1024, 1024}, dimensions);
-    Camera camera({0, 0, -1}, {0, to_radians(0), 0}, to_radians(60),
+    const vec2i dimensions = {512, 512};
+    Window window({512, 512}, dimensions);
+    Camera camera({-2, 0, -2}, {0, -to_radians(45), 0}, to_radians(60),
                   dimensions.y / dimensions.x, 10, 0.1);
     Scene scene(&window, &camera);
 
-    // // load the mesh, position it in the world space
-    // Mesh mesh = Mesh("./res/models/african_head.obj");
-    // mesh.add_position({0, 0, 0}, {0, to_radians(180), 0});
+    // load the texture and mesh, position it in the world space
+    Texture texture("./res/textures/half_life_box.ppm");
+    Mesh mesh = Mesh("./res/models/cube_texture_test.obj", &texture);
+    mesh.add_position({0, 0, 0}, {0, to_radians(0), 0});
 
-    // // add mesh to scene
-    // scene.add_mesh(&mesh);
+    // add mesh to scene
+    scene.add_mesh(&mesh);
 
     window.clear({0, 0, 0});
-    // scene.render();
-
-    std::vector<vec4d> vertices = {
-        {-0.5,  0.5},
-        {-0.5, -0.5},
-        { 0.5, -0.5},
-        { 0.5,  0.5}
-    };
-    std::vector<vec2d> uv = {
-        {0, 1},
-        {0, 0},
-        {1, 0},
-        {1, 1}
-    };
-    Texture texture("./res/textures/half_life_box.ppm");
-    window.textured_triangle(
-        {vertices[0], vertices[1], vertices[2]},
-        {uv[0], uv[1], uv[2]},
-        texture
-    );
-    window.colored_triangle(
-        {vertices[3], vertices[0], vertices[2]},
-        {
-            {255, 0, 0},
-            {0, 255, 0},
-            {0, 0, 255}
-        }
-    );
+    scene.render();
 
     std::cout << "Rendered!" << std::endl;
 

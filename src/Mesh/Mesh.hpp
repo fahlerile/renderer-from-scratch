@@ -2,13 +2,14 @@
 #include <string>
 #include <vector>
 #include "Window/Window.hpp"
+#include "Texture/Texture.hpp"
 #include "utils/vec/vec.hpp"
 #include "utils/mat/mat.hpp"
 
 class Mesh
 {
 public:
-    Mesh(std::string path);
+    Mesh(std::string path, Texture *texture);
 
     void add_position(vec3d position, vec3d rot_angles);
     void render(Window* window, mat4& view_mat, mat4& projection_mat);
@@ -20,7 +21,9 @@ public:
 private:
     std::vector<vec3d> vertices;
     std::vector<vec3i> faces;
-    std::vector<vec3d> texture_coordinates;
+    std::vector<vec2d> texture_coordinates;
 
     std::vector<mat4> model_matrices;
+
+    Texture *texture;
 };

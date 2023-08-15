@@ -11,8 +11,10 @@
 #include "utils/mat/mat.hpp"
 
 // Parse .obj file
-Mesh::Mesh(std::string path)
+Mesh::Mesh(std::string path, Texture *texture)
 {
+    this->texture = texture;
+
     std::ifstream file(path);
     if (file.is_open())
     {
@@ -57,7 +59,7 @@ Mesh::Mesh(std::string path)
                 while (std::getline(iss, s_coord, ' '))
                     coords.push_back(std::stod(s_coord));
 
-                this->texture_coordinates.push_back({coords[0], coords[1], coords[2]});
+                this->texture_coordinates.push_back({coords[0], coords[1]});
             }
         }
     }
@@ -82,19 +84,25 @@ void Mesh::render(Window* window, mat4& view_mat, mat4& projection_mat)
     {
         mat4 mvp = projection_mat * view_mat * model_mat;
 
-        // For every face in this model
+        // for every face in this model
         for (int i = 0; i < this->n_faces(); i++)
         {
-            vec3i face = this->faces[i];
+            // get the face
+            // vec3i face = this->faces[i];
+            face_t face = this->faces[i];
 
-            vec3d v[3];  // vertices, world space
-            vec3d vt[3];  // vertex texture coordinates
-            vec4d p[3];  // points in screen space, normalized device coordinates
+            vec3d v[3];   // vertices, world space
+            vec2d vt[3];  // vertex texture coordinates
+            vec4d p[3];   // points in screen space, normalized device coordinates
+
+            // for every vertex in this triangular polygon
             for (int i = 0; i < 3; i++)
             {
                 // -1 because .obj is 1-indexed
-                v[i] = this->vertices[face[i] - 1];
-                vt[i] = this->texture_coordinates[face[i] - 1];
+                // v[i] = this->vertices[face[i] - 1];
+                // vt[i] = this->texture_coordinates[face[i] - 1];
+                v[i] = this->vertices[face.vertices_indices[i]];
+                vt[i] = this->texture_coordinates[face.texture_coordinates_indices[i]];
 
                 p[i] = (mvp * (vec4d) {v[i].x, v[i].y, v[i].z, 1});
                 // perspective divide
@@ -124,12 +132,21 @@ void Mesh::render(Window* window, mat4& view_mat, mat4& projection_mat)
             double intensity = normal.dot_product(light_direction);
             color = color * intensity;
 
-            // window->triangle(
-            //     {p[2], p[1], p[0]},
-            //     {color, color, color},
-            //     {vt[2], vt[1], vt[0]},
-            //     // add texture
-            // );
+            // std::cout << v[0][0] << " " << v[0][1] << " " << v[0][2] << "\n"
+            //           << v[1][0] << " " << v[1][1] << " " << v[1][2] << "\n"
+            //           << v[2][0] << " " << v[2][1] << " " << v[2][2] << "\n"
+            //           << vt[0][0] << " " << vt[0][1] << "\n"
+            //           << vt[1][0] << " " << vt[1][1] << "\n"
+            //           << vt[2][0] << " " << vt[2][1] << "\n"
+            //           << std::endl;
+
+            window->textured_triangle(
+                {p[2], p[1], p[0]},
+                {vt[2], vt[1], vt[0]},
+                this->texture
+            );
+
+            // return;
         }
     }
 }
