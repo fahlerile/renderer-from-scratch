@@ -9,8 +9,9 @@
 // https://ru.wikipedia.org/wiki/Portable_anymap for format reference
 Texture::Texture(std::string path)
 {
-    std::ifstream file(path, std::ios::binary);
-    assert(file.is_open());
+    std::ifstream file;
+    file.open(path, std::ios::binary);
+    assert(!file.fail());
 
     // read from file, assert needed things
     std::string line;
@@ -36,20 +37,24 @@ Texture::Texture(std::string path)
     assert(std::stoi(line) == 255);
 
     // get the image data (until EOF)
-    line.clear();
-    std::copy(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>(), std::back_inserter(line));
+    int end_of_header_pos = file.tellg();
+    file.seekg(0, file.end);
+    int length = (int) file.tellg() - end_of_header_pos;
+    file.seekg(end_of_header_pos, file.beg);
+    char *image_data = new char[length];
+    file.read(image_data, length);
 
     std::vector<Color> image_row;
-    for (int i = 0, n = line.length() - 2; i < n; i += 3)  // i - pixel index
+    for (int i = 0, n = length - 2; i < n; i += 3)  // i - byte index, each pixel consists of 3 bytes
     {
         Color color = {
-            (unsigned char) line[i],
-            (unsigned char) line[i+1],
-            (unsigned char) line[i+2]
+            (uint8_t) image_data[i],
+            (uint8_t) image_data[i+1],
+            (uint8_t) image_data[i+2]
         };
 
         image_row.push_back(color);
-        if (i % width == 0)
+        if (((i / 3) + 1) % width == 0)
         {
             this->data.push_back(image_row);
             image_row.clear();
@@ -57,6 +62,7 @@ Texture::Texture(std::string path)
     }
 
     file.close();
+    delete[] image_data;
 }
 
 Color Texture::get_color_from_uv(vec2d uv)

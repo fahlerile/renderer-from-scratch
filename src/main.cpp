@@ -49,7 +49,7 @@ int main()
         {1, 0},
         {1, 1}
     };
-    Texture texture("./res/textures/test_texture.ppm");
+    Texture texture("./res/textures/half_life_box.ppm");
     window.triangle(
         {vertices[0], vertices[1], vertices[2]},
         {colors[0], colors[1], colors[2]},

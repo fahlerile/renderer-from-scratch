@@ -7,8 +7,8 @@ The goal of this project is to create a simple (relatively) program that can tra
 Uses right-hand coordinate system, the rotations are clockwise.
 
 ## Libraries Used:
-- [SDL2](https://www.libsdl.org/) because I don't want to handle windows by myself. I use SDL2 just to open a window and draw pixels to it.
-- [fpm](https://github.com/MikeLankamp/fpm) (fixed-point math) because I don't want to write a ton of boilerplate code just to operate on fixed-point numbers.
+- [SDL2](https://www.libsdl.org/)
+- [fpm](https://github.com/MikeLankamp/fpm) (fixed-point math)
 
 # Build
 
@@ -30,7 +30,7 @@ cd bin
     - [x] Interpolate `u v` coordinates inside the triangle
     - [x] Add `Texture` class and pass it to triangle function
     - [x] Color the pixels in rasterization stage according to this texture
-    - Fix image artifacts in `test_texture.ppm` box (bug in PPM loader?)
+    - [x] Fix image artifacts in `test_texture.ppm` box (bug in PPM loader?)
     - Create two separate functions for colored triangle and for textured triangle
     - Render a head with textures!
 - Fix color interpolation in `Window::line()`
