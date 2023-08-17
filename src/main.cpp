@@ -16,14 +16,14 @@ int main()
     // Initialize needed classes
     const vec2i dimensions = {512, 512};
     Window window({512, 512}, dimensions);
-    Camera camera({3, 0, -3}, {0, to_radians(-60), 0}, to_radians(60),
+    Camera camera({0, 0, -2.3}, {0, to_radians(0), 0}, to_radians(60),
                   dimensions.y / dimensions.x, 10, 0.1);
     Scene scene(&window, &camera);
 
     // load the texture and mesh, position it in the world space
     Texture texture("./res/textures/half_life_box.ppm");
     Mesh mesh = Mesh("./res/models/cube_texture_test.obj", &texture);
-    mesh.add_position({0, 0, 0}, {to_radians(0), to_radians(0), 0});
+    mesh.add_position({0, 0, 0}, {to_radians(0), to_radians(60), 0});
 
     // add mesh to scene
     scene.add_mesh(&mesh);

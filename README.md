@@ -35,10 +35,10 @@ cd bin
     - [x] Save not only the indices of vertices in `Mesh::faces`, but indices of texture coordinates too! (and normals later) (some `face_t` structure with `std::vectors` inside?)
         - [x] Handle `.obj`'s 1-based indexing in parsing stage!
     - Render a textured cube
+        - Fix triangles not rendering (step inside rasterization functions)
+        - Fix rendering artifact (pixelnoe mesivo)
         - Fix texture mapping artifact (one side is more noisy than the other)
-        - Bug in barycentric coordinates?
-        - Fix rendering artifact
-        - Fix triangles not rendering
+        - Bug in barycentric coordinates? (perspective texture mapping)
     - Render a head with textures!
 - Fix color interpolation in `Window::line()`
 - Gouraud shading

@@ -143,8 +143,8 @@ void Mesh::render(Window* window, mat4& view_mat, mat4& projection_mat)
             // using this hard-coded vector because in screen
             // space camera is always looking in +Z direction
             float visible = normal.dot_product({0, 0, 1});
-            if (visible < 0)
-                continue;
+            // if (visible < 0)
+            //     continue;
 
             // // calculate light intensity, get color for this triangle
             // // using this hard-coded light direction vector because I
@@ -153,6 +153,11 @@ void Mesh::render(Window* window, mat4& view_mat, mat4& projection_mat)
             // vec3d light_direction = {0, 0, 1};
             // double intensity = normal.dot_product(light_direction);
             // color = color * intensity;
+
+            // window->colored_triangle(
+            //     {p[2], p[1], p[0]},
+            //     {color, color, color}
+            // );
 
             // std::cout << v[0][0] << " " << v[0][1] << " " << v[0][2] << "\n"
             //           << v[1][0] << " " << v[1][1] << " " << v[1][2] << "\n"
